@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  n8n:
+    image: n8nio/n8n
+    container_name: haigent-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      # Basic n8n config
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=UTC
+
+      # Supabase credentials
+      - SUPABASE_URL=https://wotrmpzlaivdgsuxkumb.supabase.co
+      - SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvdHJtcHpsYWl2ZGdzdXhrdW1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyNzI2MTksImV4cCI6MjA4Mjg0ODYxOX0.O29q4hDjGgEerAanTv6xSnKKxGhdzEgLtX1IsgSmYOM
+      - SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvdHJtcHpsYWl2ZGdzdXhrdW1iIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NzI3MjYxOSwiZXhwIjoyMDgyODQ4NjE5fQ.EpFG4rOtbAme6iHssqusIVAmcAvjlthN2HCDMzWL__w
+
+      # OpenRouter API (add your key)
+      - OPENROUTER_API_KEY=your-openrouter-api-key
+
+      # Resend API (add your key)
+      - RESEND_API_KEY=your-resend-api-key
+
+      # App URL for booking links
+      - APP_URL=http://localhost:3000
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  n8n_data:

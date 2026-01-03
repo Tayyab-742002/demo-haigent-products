@@ -1,0 +1,262 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-lato), sans-serif;
+  --font-heading: var(--font-source-sans), sans-serif;
+  --font-mono: monospace;
+
+  /* Haigent Brand Colors */
+  --color-brand-cream: #f8f4ed;
+  --color-brand-charcoal: #232323;
+  --color-brand-gold: #f3cf63;
+  --color-brand-teal: #19a9b6;
+  --color-brand-green: #9abf45;
+  --color-brand-pink: #e35b6d;
+
+  /* Sidebar Colors */
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+
+  /* Chart Colors */
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+
+  /* Core Colors */
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  /* Radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Success/Warning/Info Colors */
+  --color-success: #22c55e;
+  --color-success-foreground: #ffffff;
+  --color-warning: #f59e0b;
+  --color-warning-foreground: #232323;
+  --color-info: #3b82f6;
+  --color-info-foreground: #ffffff;
+
+  /* Animations */
+  --animate-appear-zoom: appear-zoom 0.8s ease-out forwards;
+  --animate-appear: appear 0.5s ease-out forwards;
+  --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
+  --animate-slide-up: slide-up 0.3s ease-out forwards;
+  --animate-slide-down: slide-down 0.3s ease-out forwards;
+
+  @keyframes appear-zoom {
+    0% {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes appear {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse-soft {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes slide-up {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-down {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+:root {
+  --radius: 0.5rem;
+
+  /* Haigent Brand Constants */
+  --brand-cream: #ffffff;
+  --brand-charcoal: #232323;
+  --brand-gold: #f3cf63;
+  --brand-teal: #19a9b6;
+  --brand-green: #9abf45;
+  --brand-pink: #e35b6d;
+
+  /* Grid line color for cards */
+  --grid-line-color: rgba(0, 0, 0, 0.05);
+
+  /* Color Mappings */
+  --background: var(--brand-cream);
+  --foreground: var(--brand-charcoal);
+
+  --card: var(--brand-cream);
+  --card-foreground: var(--brand-charcoal);
+
+  --popover: var(--brand-cream);
+  --popover-foreground: var(--brand-charcoal);
+
+  /* Primary: Gold */
+  --primary: var(--brand-gold);
+  --primary-foreground: var(--brand-charcoal);
+
+  /* Secondary: Teal */
+  --secondary: var(--brand-teal);
+  --secondary-foreground: var(--brand-cream);
+
+  /* Muted */
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+
+  /* Accent: Green */
+  --accent: var(--brand-green);
+  --accent-foreground: var(--brand-charcoal);
+
+  /* Destructive: Pink */
+  --destructive: var(--brand-pink);
+  --destructive-foreground: var(--brand-cream);
+
+  /* Borders & Input */
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: var(--brand-gold);
+
+  /* Chart Colors */
+  --chart-1: var(--brand-teal);
+  --chart-2: var(--brand-green);
+  --chart-3: var(--brand-pink);
+  --chart-4: var(--brand-gold);
+  --chart-5: var(--brand-charcoal);
+
+  /* Sidebar */
+  --sidebar: var(--brand-charcoal);
+  --sidebar-foreground: var(--brand-cream);
+  --sidebar-primary: var(--brand-gold);
+  --sidebar-primary-foreground: var(--brand-charcoal);
+  --sidebar-accent: var(--brand-green);
+  --sidebar-accent-foreground: var(--brand-charcoal);
+  --sidebar-border: #404040;
+  --sidebar-ring: var(--brand-gold);
+}
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+  }
+}
+
+@layer utilities {
+  /* Status Colors */
+  .status-applied {
+    @apply bg-muted text-muted-foreground;
+  }
+  .status-scoring {
+    @apply bg-brand-gold/20 text-brand-charcoal;
+  }
+  .status-scored {
+    @apply bg-brand-teal/20 text-brand-teal;
+  }
+  .status-invited {
+    @apply bg-brand-green/20 text-brand-green;
+  }
+  .status-scheduled {
+    @apply bg-brand-teal text-white;
+  }
+  .status-completed {
+    @apply bg-green-500 text-white;
+  }
+  .status-rejected {
+    @apply bg-brand-pink/20 text-brand-pink;
+  }
+
+  /* Score Colors */
+  .score-high {
+    @apply text-green-600;
+  }
+  .score-medium {
+    @apply text-brand-gold;
+  }
+  .score-low {
+    @apply text-brand-pink;
+  }
+
+  /* Animation Utilities */
+  .animate-appear {
+    animation: appear 0.5s ease-out forwards;
+  }
+  .animate-appear-zoom {
+    animation: appear-zoom 0.8s ease-out forwards;
+  }
+  .animate-pulse-soft {
+    animation: pulse-soft 2s ease-in-out infinite;
+  }
+}
