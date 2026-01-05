@@ -198,12 +198,12 @@ export default async function InterviewsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div>
+                        <Link href={`/schedule/interviews/${interview.id}`} className="block hover:underline">
                           <p className="font-medium">{interview.candidates?.name}</p>
                           <p className="text-sm text-muted-foreground">
                             {interview.candidates?.email}
                           </p>
-                        </div>
+                        </Link>
                       </TableCell>
                       <TableCell>
                         <div>
@@ -239,17 +239,24 @@ export default async function InterviewsPage() {
                         <InterviewStatusBadge status={interview.status} />
                       </TableCell>
                       <TableCell>
-                        {interview.meeting_link && (
-                          <a
-                            href={interview.meeting_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Button size="sm" variant="outline">
-                              Join
+                        <div className="flex items-center gap-2">
+                          {interview.meeting_link && (
+                            <a
+                              href={interview.meeting_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Button size="sm" variant="outline">
+                                Join
+                              </Button>
+                            </a>
+                          )}
+                          <Link href={`/schedule/interviews/${interview.id}/feedback`}>
+                            <Button size="sm" variant="ghost">
+                              Feedback
                             </Button>
-                          </a>
-                        )}
+                          </Link>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -278,6 +285,7 @@ export default async function InterviewsPage() {
                     <TableHead>Position</TableHead>
                     <TableHead>Interviewer</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead className="w-[100px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -287,12 +295,21 @@ export default async function InterviewsPage() {
                         {new Date(interview.scheduled_at).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
-                        <p className="font-medium">{interview.candidates?.name}</p>
+                        <Link href={`/schedule/interviews/${interview.id}`} className="hover:underline">
+                          <p className="font-medium">{interview.candidates?.name}</p>
+                        </Link>
                       </TableCell>
                       <TableCell>{interview.jobs?.title}</TableCell>
                       <TableCell>{interview.interviewer_name || "N/A"}</TableCell>
                       <TableCell>
                         <InterviewStatusBadge status={interview.status} />
+                      </TableCell>
+                      <TableCell>
+                        <Link href={`/schedule/interviews/${interview.id}/feedback`}>
+                          <Button size="sm" variant="ghost">
+                            {interview.feedback_submitted_at ? "View" : "Feedback"}
+                          </Button>
+                        </Link>
                       </TableCell>
                     </TableRow>
                   ))}
