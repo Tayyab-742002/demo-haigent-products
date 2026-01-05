@@ -118,11 +118,11 @@ export interface Interviewer {
   title?: string;
   department?: string;
   avatar_url?: string;
+  // Cal.com Integration Fields (availability managed in Cal.com)
   cal_username?: string;
-  cal_event_type_slug?: string;
+  cal_api_key?: string;
   cal_event_type_id?: number;
-  timezone: string;
-  max_interviews_per_day: number;
+  cal_event_type_slug?: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;

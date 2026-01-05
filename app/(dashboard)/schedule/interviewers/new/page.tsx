@@ -11,25 +11,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ArrowLeft, Loader2, Save, Clock, Zap, Calendar } from "lucide-react";
+import { ArrowLeft, Loader2, Save, Zap, Calendar, Key, Link as LinkIcon, Eye, EyeOff } from "lucide-react";
 
 const interviewerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   title: z.string().optional(),
   department: z.string().optional(),
+  // Cal.com Integration Fields
   cal_username: z.string().optional(),
-  timezone: z.string().default("America/New_York"),
-  max_interviews_per_day: z.number().min(1).max(10).default(4),
-  available_start_time: z.string().default("09:00"),
-  available_end_time: z.string().default("17:00"),
+  cal_api_key: z.string().optional(),
+  cal_event_type_id: z.number().optional(),
+  cal_event_type_slug: z.string().optional(),
 });
 
 type InterviewerFormData = z.infer<typeof interviewerSchema>;
@@ -37,12 +30,11 @@ type InterviewerFormData = z.infer<typeof interviewerSchema>;
 export default function NewInterviewerPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [showApiKey, setShowApiKey] = useState(false);
 
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors },
   } = useForm<InterviewerFormData>({
     resolver: zodResolver(interviewerSchema),
@@ -52,10 +44,9 @@ export default function NewInterviewerPage() {
       title: "",
       department: "",
       cal_username: "",
-      timezone: "America/New_York",
-      max_interviews_per_day: 4,
-      available_start_time: "09:00",
-      available_end_time: "17:00",
+      cal_api_key: "",
+      cal_event_type_id: undefined,
+      cal_event_type_slug: "",
     },
   });
 
@@ -70,13 +61,14 @@ export default function NewInterviewerPage() {
         email: data.email,
         title: data.title || null,
         department: data.department || null,
+        // Cal.com Integration
         cal_username: data.cal_username || null,
-        timezone: data.timezone,
-        max_interviews_per_day: data.max_interviews_per_day,
+        cal_api_key: data.cal_api_key || null,
+        cal_event_type_id: data.cal_event_type_id || null,
+        cal_event_type_slug: data.cal_event_type_slug || null,
+        // Organization
         organization_id: "00000000-0000-0000-0000-000000000001", // Demo org
         is_active: true,
-        available_start_time: data.available_start_time,
-        available_end_time: data.available_end_time,
       };
 
       const { error } = await supabase.from("interviewers").insert(interviewerData);
@@ -182,12 +174,15 @@ export default function NewInterviewerPage() {
               Cal.com Integration
             </CardTitle>
             <CardDescription>
-              Connect to Cal.com for automatic meeting scheduling and calendar sync
+              Connect the interviewer's Cal.com account for automatic meeting scheduling.
+              Each interviewer uses their own Cal.com to manage availability.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="cal_username">Cal.com Username</Label>
+              <Label htmlFor="cal_username">
+                Cal.com Username <span className="text-destructive">*</span>
+              </Label>
               <div className="flex items-center gap-2">
                 <span className="text-muted-foreground text-sm">cal.com/</span>
                 <Input
@@ -199,85 +194,89 @@ export default function NewInterviewerPage() {
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                Enter the Cal.com username for this interviewer. This enables automatic scheduling via Cal.com with video call links.
+                The Cal.com username (found in your Cal.com profile URL)
               </p>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Availability Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-brand-teal" />
-              Availability Settings
-            </CardTitle>
-            <CardDescription>
-              Configure when this interviewer is available for auto-scheduled interviews
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Timezone</Label>
-              <Select
-                value={watch("timezone")}
-                onValueChange={(value) => setValue("timezone", value)}
-                disabled={isLoading}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="America/New_York">Eastern Time (ET)</SelectItem>
-                  <SelectItem value="America/Chicago">Central Time (CT)</SelectItem>
-                  <SelectItem value="America/Denver">Mountain Time (MT)</SelectItem>
-                  <SelectItem value="America/Los_Angeles">Pacific Time (PT)</SelectItem>
-                  <SelectItem value="UTC">UTC</SelectItem>
-                  <SelectItem value="Europe/London">London (GMT)</SelectItem>
-                  <SelectItem value="Europe/Paris">Paris (CET)</SelectItem>
-                  <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="cal_api_key" className="flex items-center gap-2">
+                <Key className="h-3.5 w-3.5" />
+                Cal.com API Key <span className="text-destructive">*</span>
+              </Label>
+              <div className="relative">
+                <Input
+                  id="cal_api_key"
+                  type={showApiKey ? "text" : "password"}
+                  placeholder="cal_live_xxxxxxxxxxxxxxxx"
+                  {...register("cal_api_key")}
+                  disabled={isLoading}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowApiKey(!showApiKey)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Generate at{" "}
+                <a
+                  href="https://app.cal.com/settings/developer/api-keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-gold hover:underline"
+                >
+                  Cal.com Settings → Developer → API Keys
+                </a>
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="available_start_time">Available From</Label>
+                <Label htmlFor="cal_event_type_id" className="flex items-center gap-2">
+                  Event Type ID <span className="text-destructive">*</span>
+                </Label>
                 <Input
-                  id="available_start_time"
-                  type="time"
-                  {...register("available_start_time")}
+                  id="cal_event_type_id"
+                  type="number"
+                  placeholder="1234567"
+                  {...register("cal_event_type_id", { valueAsNumber: true })}
                   disabled={isLoading}
                 />
+                <p className="text-xs text-muted-foreground">
+                  Numeric ID from the event type URL
+                </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="available_end_time">Available Until</Label>
+                <Label htmlFor="cal_event_type_slug" className="flex items-center gap-2">
+                  <LinkIcon className="h-3.5 w-3.5" />
+                  Event Type Slug <span className="text-destructive">*</span>
+                </Label>
                 <Input
-                  id="available_end_time"
-                  type="time"
-                  {...register("available_end_time")}
+                  id="cal_event_type_slug"
+                  placeholder="interview-45min"
+                  {...register("cal_event_type_slug")}
                   disabled={isLoading}
                 />
+                <p className="text-xs text-muted-foreground">
+                  The slug from your event type URL (e.g., "interview-45min")
+                </p>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="max_interviews_per_day">
-                Max Interviews Per Day: {watch("max_interviews_per_day")}
-              </Label>
-              <input
-                type="range"
-                id="max_interviews_per_day"
-                min="1"
-                max="10"
-                className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-brand-gold"
-                {...register("max_interviews_per_day", { valueAsNumber: true })}
-                disabled={isLoading}
-              />
-              <p className="text-xs text-muted-foreground">
-                Limit interviews to prevent overbooking
-              </p>
+            {/* Help section */}
+            <div className="rounded-lg border border-dashed border-muted-foreground/30 p-4 bg-muted/30">
+              <p className="text-sm font-medium text-foreground mb-2">How to find these values:</p>
+              <ol className="text-xs text-muted-foreground space-y-1.5 list-decimal list-inside">
+                <li>Go to <strong>Cal.com → Event Types</strong></li>
+                <li>Click on your interview event type (or create one)</li>
+                <li>The URL will look like: <code className="bg-muted px-1 rounded">cal.com/event-types/1234567</code></li>
+                <li><strong>Event Type ID</strong> is the number (e.g., 1234567)</li>
+                <li><strong>Event Type Slug</strong> is from your booking URL: <code className="bg-muted px-1 rounded">cal.com/username/<strong>interview-45min</strong></code></li>
+              </ol>
             </div>
           </CardContent>
         </Card>
@@ -292,8 +291,8 @@ export default function NewInterviewerPage() {
               <div>
                 <p className="font-medium text-foreground text-sm">AI-Powered Auto-Scheduling via Cal.com</p>
                 <p className="text-xs text-muted-foreground">
-                  Qualified candidates will be automatically scheduled via Cal.com during available hours.
-                  The system finds optimal time slots considering both parties' timezones and sends calendar invites with video call links automatically.
+                  Qualified candidates will be automatically scheduled based on the interviewer's Cal.com availability.
+                  Timezone and availability are managed directly in Cal.com - no need to configure them here.
                 </p>
               </div>
             </div>

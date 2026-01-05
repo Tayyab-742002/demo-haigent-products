@@ -21,6 +21,8 @@ import {
   XCircle,
   Clock,
   Zap,
+  Link as LinkIcon,
+  AlertCircle,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -57,7 +59,9 @@ export default async function InterviewersPage() {
   });
 
   const activeInterviewers = interviewersList.filter((i) => i.is_active);
-  const inactiveInterviewers = interviewersList.filter((i) => !i.is_active);
+  const calConnectedInterviewers = interviewersList.filter(
+    (i) => i.cal_api_key && i.cal_event_type_id
+  );
 
   return (
     <div className="space-y-6">
@@ -93,10 +97,13 @@ export default async function InterviewersPage() {
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold">
-              {interviewCounts?.filter((i) => i.status === "scheduled").length || 0}
+            <div className="flex items-center gap-2">
+              <div className="text-2xl font-bold">{calConnectedInterviewers.length}</div>
+              {calConnectedInterviewers.length > 0 && (
+                <LinkIcon className="h-4 w-4 text-brand-teal" />
+              )}
             </div>
-            <p className="text-sm text-muted-foreground">Scheduled Interviews</p>
+            <p className="text-sm text-muted-foreground">Cal.com Connected</p>
           </CardContent>
         </Card>
         <Card>
@@ -104,7 +111,7 @@ export default async function InterviewersPage() {
             <div className="text-2xl font-bold">
               {interviewCounts?.filter((i) => i.status === "completed").length || 0}
             </div>
-            <p className="text-sm text-muted-foreground">Completed</p>
+            <p className="text-sm text-muted-foreground">Completed Interviews</p>
           </CardContent>
         </Card>
       </div>
@@ -139,7 +146,7 @@ export default async function InterviewersPage() {
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Title</TableHead>
-                  <TableHead>Department</TableHead>
+                  <TableHead>Cal.com</TableHead>
                   <TableHead>Interviews</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="w-[100px]">Actions</TableHead>
@@ -179,9 +186,23 @@ export default async function InterviewersPage() {
                         )}
                       </TableCell>
                       <TableCell>
-                        <span className="text-sm text-muted-foreground">
-                          {interviewer.department || "-"}
-                        </span>
+                        {interviewer.cal_api_key && interviewer.cal_event_type_id ? (
+                          <Badge
+                            variant="outline"
+                            className="bg-brand-teal/10 text-brand-teal border-brand-teal/20"
+                          >
+                            <LinkIcon className="h-3 w-3 mr-1" />
+                            Connected
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant="outline"
+                            className="bg-orange-500/10 text-orange-600 border-orange-500/20"
+                          >
+                            <AlertCircle className="h-3 w-3 mr-1" />
+                            Not Setup
+                          </Badge>
+                        )}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1.5">
