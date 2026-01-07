@@ -14,19 +14,19 @@ export function useRealtimeInterviews() {
     // Initial fetch with related data
     async function fetchInterviews() {
       const { data, error } = await supabase
-        .from("interviews")
+        .from("schedule_interviews")
         .select(`
           *,
-          candidates (
+          schedule_candidates!inner (
             id,
             name,
             email
           ),
-          jobs (
+          schedule_jobs!inner (
             id,
             title
           ),
-          interviewers (
+          schedule_interviewers!inner (
             id,
             name
           )
@@ -43,25 +43,25 @@ export function useRealtimeInterviews() {
 
     // Set up real-time subscription
     const channel = supabase
-      .channel("interviews-changes")
+      .channel("schedule-interviews-changes")
       .on(
         "postgres_changes",
         {
           event: "*",
           schema: "public",
-          table: "interviews",
+          table: "schedule_interviews",
         },
         async (payload) => {
           console.log("📅 Interview change detected:", payload.eventType, payload);
           if (payload.eventType === "INSERT") {
             // Fetch the new interview with relations
             const { data } = await supabase
-              .from("interviews")
+              .from("schedule_interviews")
               .select(`
                 *,
-                candidates (id, name, email),
-                jobs (id, title),
-                interviewers (id, name)
+                schedule_candidates!inner (id, name, email),
+                schedule_jobs!inner (id, title),
+                schedule_interviewers!inner (id, name)
               `)
               .eq("id", payload.new.id)
               .single();

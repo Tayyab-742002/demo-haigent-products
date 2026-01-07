@@ -16,7 +16,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
   const supabase = await createClient();
 
   const { data: job, error } = await supabase
-    .from("jobs")
+    .from("schedule_jobs")
     .select("id, title, department, location")
     .eq("id", id)
     .eq("status", "active")

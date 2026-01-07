@@ -167,10 +167,10 @@ export default function InterviewFeedbackPage({ params }: FeedbackPageProps) {
         const supabase = createClient();
 
         const { data, error: fetchError } = await supabase
-          .from("interviews")
+          .from("schedule_interviews")
           .select(`
             *,
-            candidates (
+            schedule_candidates!inner (
               id,
               name,
               email,
@@ -178,12 +178,12 @@ export default function InterviewFeedbackPage({ params }: FeedbackPageProps) {
               current_company,
               ai_score
             ),
-            jobs (
+            schedule_jobs!inner (
               id,
               title,
               department
             ),
-            interviewers (
+            schedule_interviewers!inner (
               id,
               name,
               email
@@ -239,7 +239,7 @@ export default function InterviewFeedbackPage({ params }: FeedbackPageProps) {
       const formData = watch();
 
       const { error: updateError } = await supabase
-        .from("interviews")
+        .from("schedule_interviews")
         .update({
           feedback_rating: formData.rating,
           feedback_recommendation: formData.recommendation,
@@ -255,7 +255,7 @@ export default function InterviewFeedbackPage({ params }: FeedbackPageProps) {
       // Update candidate status to interviewed
       if (interview?.candidates?.id) {
         await supabase
-          .from("candidates")
+          .from("schedule_candidates")
           .update({
             status: "interviewed",
             updated_at: new Date().toISOString(),

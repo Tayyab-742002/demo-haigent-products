@@ -126,7 +126,7 @@ export function CandidateStatusUpdate({
       const supabase = createClient();
 
       const { error } = await supabase
-        .from("candidates")
+        .from("schedule_candidates")
         .update({
           status: newStatus,
           updated_at: new Date().toISOString(),

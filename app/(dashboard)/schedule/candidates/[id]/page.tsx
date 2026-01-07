@@ -49,10 +49,10 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
 
   // Fetch candidate with job info
   const { data: candidate, error } = await supabase
-    .from("candidates")
+    .from("schedule_candidates")
     .select(`
       *,
-      jobs (
+      schedule_jobs!inner (
         id,
         title,
         department,
@@ -69,7 +69,7 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
 
   // Fetch interviews for this candidate
   const { data: interviews } = await supabase
-    .from("interviews")
+    .from("schedule_interviews")
     .select("*")
     .eq("candidate_id", id)
     .order("scheduled_at", { ascending: false });

@@ -203,7 +203,7 @@ export function ApplicationForm({ jobId, jobTitle }: ApplicationFormProps) {
       };
 
       const { data: insertedCandidate, error: insertError } = await supabase
-        .from("candidates")
+        .from("schedule_candidates")
         .insert(candidateData)
         .select("id")
         .single();

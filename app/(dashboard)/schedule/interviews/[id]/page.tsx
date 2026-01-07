@@ -117,10 +117,10 @@ export default async function InterviewDetailPage({ params }: InterviewDetailPag
   const secondaryColor = agent?.secondaryColor || "brand-teal";
 
   const { data: interview, error } = await supabase
-    .from("interviews")
+    .from("schedule_interviews")
     .select(`
       *,
-      candidates (
+      schedule_candidates!inner (
         id,
         name,
         email,
@@ -134,13 +134,13 @@ export default async function InterviewDetailPage({ params }: InterviewDetailPag
         ai_recommendation,
         status
       ),
-      jobs (
+      schedule_jobs!inner (
         id,
         title,
         department,
         location
       ),
-      interviewers (
+      schedule_interviewers!inner (
         id,
         name,
         email,

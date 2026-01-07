@@ -76,7 +76,7 @@ export default function NewInterviewerPage() {
         is_active: true,
       };
 
-      const { error } = await supabase.from("interviewers").insert(interviewerData);
+      const { error } = await supabase.from("schedule_interviewers").insert(interviewerData);
 
       if (error) throw error;
 

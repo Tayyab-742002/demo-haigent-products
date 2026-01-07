@@ -36,7 +36,7 @@ export default async function InterviewersPage() {
 
   // Fetch interviewers
   const { data: interviewers } = await supabase
-    .from("interviewers")
+    .from("schedule_interviewers")
     .select("*")
     .order("name", { ascending: true });
 
@@ -44,7 +44,7 @@ export default async function InterviewersPage() {
 
   // Get interview counts for each interviewer
   const { data: interviewCounts } = await supabase
-    .from("interviews")
+    .from("schedule_interviews")
     .select("interviewer_id, status")
     .in(
       "interviewer_id",

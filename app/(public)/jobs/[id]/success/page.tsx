@@ -16,7 +16,7 @@ export default async function SuccessPage({ params }: SuccessPageProps) {
   const supabase = await createClient();
 
   const { data: job, error } = await supabase
-    .from("jobs")
+    .from("schedule_jobs")
     .select("id, title")
     .eq("id", id)
     .single();

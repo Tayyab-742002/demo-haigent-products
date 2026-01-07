@@ -14,7 +14,7 @@ export function useRealtimeCandidates(jobId?: string) {
     // Initial fetch
     async function fetchCandidates() {
       let query = supabase
-        .from("candidates")
+        .from("schedule_candidates")
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -33,13 +33,13 @@ export function useRealtimeCandidates(jobId?: string) {
 
     // Set up real-time subscription
     const channel = supabase
-      .channel("candidates-changes")
+      .channel("schedule-candidates-changes")
       .on(
         "postgres_changes",
         {
           event: "*",
           schema: "public",
-          table: "candidates",
+          table: "schedule_candidates",
           ...(jobId ? { filter: `job_id=eq.${jobId}` } : {}),
         },
         (payload) => {

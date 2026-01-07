@@ -27,10 +27,10 @@ export default async function CandidatesPage() {
 
   // Fetch all candidates with job information
   const { data: candidates, error } = await supabase
-    .from("candidates")
+    .from("schedule_candidates")
     .select(`
       *,
-      jobs (
+      schedule_jobs!inner (
         id,
         title,
         department,

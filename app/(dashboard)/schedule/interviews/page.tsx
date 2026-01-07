@@ -65,17 +65,17 @@ export default async function InterviewsPage() {
 
   // Fetch interviews with candidate and job info
   const { data: interviews } = await supabase
-    .from("interviews")
+    .from("schedule_interviews")
     .select(`
       *,
-      candidates (
+      schedule_candidates!inner (
         id,
         name,
         email,
         current_title,
         current_company
       ),
-      jobs (
+      schedule_jobs!inner (
         id,
         title,
         department

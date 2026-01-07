@@ -83,13 +83,13 @@ export function JobForm({ initialData, mode = "create" }: JobFormProps) {
 
       if (mode === "edit" && initialData?.id) {
         const { error } = await supabase
-          .from("jobs")
+          .from("schedule_jobs")
           .update(jobData)
           .eq("id", initialData.id);
 
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("jobs").insert(jobData);
+        const { error } = await supabase.from("schedule_jobs").insert(jobData);
 
         if (error) throw error;
       }

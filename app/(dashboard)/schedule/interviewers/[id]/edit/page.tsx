@@ -102,7 +102,7 @@ export default function EditInterviewerPage({ params }: EditInterviewerPageProps
       try {
         const supabase = createClient();
         const { data, error } = await supabase
-          .from("interviewers")
+          .from("schedule_interviewers")
           .select("*")
           .eq("id", id)
           .single();
@@ -155,7 +155,7 @@ export default function EditInterviewerPage({ params }: EditInterviewerPageProps
       };
 
       const { error } = await supabase
-        .from("interviewers")
+        .from("schedule_interviewers")
         .update(updateData)
         .eq("id", id);
 
@@ -180,7 +180,7 @@ export default function EditInterviewerPage({ params }: EditInterviewerPageProps
 
       // Check if interviewer has any scheduled interviews
       const { data: interviews } = await supabase
-        .from("interviews")
+        .from("schedule_interviews")
         .select("id")
         .eq("interviewer_id", id)
         .eq("status", "scheduled")
@@ -193,7 +193,7 @@ export default function EditInterviewerPage({ params }: EditInterviewerPageProps
       }
 
       const { error } = await supabase
-        .from("interviewers")
+        .from("schedule_interviewers")
         .delete()
         .eq("id", id);
 

@@ -29,24 +29,24 @@ export function RealtimeStats({ initialStats }: RealtimeStatsProps) {
     const fetchStats = async () => {
       // Fetch jobs count
       const { count: jobsCount } = await supabase
-        .from("jobs")
+        .from("schedule_jobs")
         .select("*", { count: "exact", head: true })
         .eq("status", "active");
 
       // Fetch candidates count
       const { count: candidatesCount } = await supabase
-        .from("candidates")
+        .from("schedule_candidates")
         .select("*", { count: "exact", head: true });
 
       // Fetch scheduled interviews count
       const { count: interviewsCount } = await supabase
-        .from("interviews")
+        .from("schedule_interviews")
         .select("*", { count: "exact", head: true })
         .in("status", ["scheduled", "confirmed"]);
 
       // Fetch avg AI score
       const { data: scoresData } = await supabase
-        .from("candidates")
+        .from("schedule_candidates")
         .select("ai_score")
         .not("ai_score", "is", null);
 
@@ -66,10 +66,10 @@ export function RealtimeStats({ initialStats }: RealtimeStatsProps) {
 
     // Subscribe to changes
     const jobsChannel = supabase
-      .channel("jobs-changes")
+      .channel("schedule-jobs-changes")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "jobs" },
+        { event: "*", schema: "public", table: "schedule_jobs" },
         (payload) => {
           console.log("💼 Job change detected:", payload.eventType);
           fetchStats();
@@ -84,10 +84,10 @@ export function RealtimeStats({ initialStats }: RealtimeStatsProps) {
       });
 
     const candidatesChannel = supabase
-      .channel("candidates-changes-stats")
+      .channel("schedule-candidates-changes-stats")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "candidates" },
+        { event: "*", schema: "public", table: "schedule_candidates" },
         (payload) => {
           console.log("👤 Candidate change detected (stats):", payload.eventType);
           fetchStats();
@@ -102,10 +102,10 @@ export function RealtimeStats({ initialStats }: RealtimeStatsProps) {
       });
 
     const interviewsChannel = supabase
-      .channel("interviews-changes-stats")
+      .channel("schedule-interviews-changes-stats")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "interviews" },
+        { event: "*", schema: "public", table: "schedule_interviews" },
         (payload) => {
           console.log("📅 Interview change detected (stats):", payload.eventType);
           fetchStats();

@@ -48,7 +48,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
   // Fetch job details
   const { data: job, error: jobError } = await supabase
-    .from("jobs")
+    .from("schedule_jobs")
     .select("*")
     .eq("id", id)
     .single();
@@ -59,10 +59,10 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
   // Fetch candidates for this job with their interview info
   const { data: candidates } = await supabase
-    .from("candidates")
+    .from("schedule_candidates")
     .select(`
       *,
-      interviews (
+      schedule_interviews!inner (
         id,
         scheduled_at,
         status,

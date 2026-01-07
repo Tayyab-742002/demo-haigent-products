@@ -39,7 +39,7 @@ export default async function JobsPage() {
   const secondaryColor = agent?.secondaryColor || "brand-teal";
 
   const { data: jobs, error } = await supabase
-    .from("jobs")
+    .from("schedule_jobs")
     .select("*")
     .order("created_at", { ascending: false });
 

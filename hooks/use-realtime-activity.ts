@@ -14,7 +14,7 @@ export function useRealtimeActivity(limit: number = 10) {
     // Initial fetch
     async function fetchActivities() {
       const { data, error } = await supabase
-        .from("activity_logs")
+        .from("schedule_activity_logs")
         .select("*")
         .order("created_at", { ascending: false })
         .limit(limit);
@@ -29,13 +29,13 @@ export function useRealtimeActivity(limit: number = 10) {
 
     // Set up real-time subscription
     const channel = supabase
-      .channel("activity-logs-changes")
+      .channel("schedule-activity-logs-changes")
       .on(
         "postgres_changes",
         {
           event: "*",
           schema: "public",
-          table: "activity_logs",
+          table: "schedule_activity_logs",
         },
         (payload) => {
           console.log("📋 Activity log change detected:", payload.eventType, payload);

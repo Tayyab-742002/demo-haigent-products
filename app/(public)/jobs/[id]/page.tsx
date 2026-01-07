@@ -25,7 +25,7 @@ export default async function PublicJobPage({ params }: PublicJobPageProps) {
   const supabase = await createClient();
 
   const { data: job, error } = await supabase
-    .from("jobs")
+    .from("schedule_jobs")
     .select("*")
     .eq("id", id)
     .eq("status", "active")

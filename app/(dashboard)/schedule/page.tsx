@@ -31,25 +31,25 @@ async function getDashboardStats(): Promise<DashboardStats> {
 
   // Get active jobs count
   const { count: activeJobs } = await supabase
-    .from("jobs")
+    .from("schedule_jobs")
     .select("*", { count: "exact", head: true })
     .eq("status", "active");
 
   // Get total candidates count
   const { count: totalCandidates } = await supabase
-    .from("candidates")
+    .from("schedule_candidates")
     .select("*", { count: "exact", head: true });
 
   // Get scheduled interviews count (future interviews with status 'scheduled')
   const { count: scheduledInterviews } = await supabase
-    .from("interviews")
+    .from("schedule_interviews")
     .select("*", { count: "exact", head: true })
     .eq("status", "scheduled")
     .gte("scheduled_at", new Date().toISOString());
 
   // Get average AI score
   const { data: scoreData } = await supabase
-    .from("candidates")
+    .from("schedule_candidates")
     .select("ai_score")
     .not("ai_score", "is", null);
 

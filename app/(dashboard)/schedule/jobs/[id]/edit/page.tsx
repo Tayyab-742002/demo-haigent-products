@@ -22,7 +22,7 @@ export default async function EditJobPage({ params }: EditJobPageProps) {
 
   // Fetch job details
   const { data: job, error } = await supabase
-    .from("jobs")
+    .from("schedule_jobs")
     .select("*")
     .eq("id", id)
     .single();
