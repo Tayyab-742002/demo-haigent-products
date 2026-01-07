@@ -44,7 +44,7 @@ export function AgentStatusMonitor({ primaryColor, secondaryColor }: AgentStatus
   const isAgentActive = scoringCount > 0;
 
   return (
-    <Card className={`border-${primaryColor}/30 bg-background`}>
+    <Card className={`shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]  bg-background`}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">

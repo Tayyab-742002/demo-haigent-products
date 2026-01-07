@@ -76,21 +76,21 @@ export default async function ScheduleDashboard() {
   return (
     <div className="space-y-8">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className={`flex flex-col sm:flex-row bg-${primaryColor} rounded-xl p-4 sm:items-center sm:justify-between gap-4`}>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
+          <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
             Schedule Haigent
-            <Badge className={`bg-${primaryColor}/10 text-${primaryColor} border-${primaryColor}/20 px-3 py-1`}>
+            <Badge className={`bg-${secondaryColor} text-white border-${primaryColor}/20 px-3 py-1`}>
               AI-Powered
             </Badge>
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-white/80 mt-1">
             Automated interview scheduling with AI candidate scoring
           </p>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className={`bg-${primaryColor} hover:brightness-110 text-brand-charcoal transition-all`}>
+            <Button className={`bg-${secondaryColor} cursor-pointer! text-brand-charcoal transition-all`}>
               <Plus className="h-4 w-4 mr-2" />
               Quick Actions
               <ChevronDown className="h-4 w-4 ml-2" />
@@ -129,8 +129,6 @@ export default async function ScheduleDashboard() {
           scheduledInterviews: stats.scheduledInterviews,
           avgAiScore: stats.avgAiScore,
         }}
-        primaryColor={primaryColor}
-        secondaryColor={secondaryColor}
       />
 
       {/* Real-time Agent & Activity Monitoring */}

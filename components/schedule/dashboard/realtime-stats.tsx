@@ -17,11 +17,9 @@ interface Stats {
 
 interface RealtimeStatsProps {
   initialStats: Stats;
-  primaryColor: string;
-  secondaryColor: string;
 }
 
-export function RealtimeStats({ initialStats, primaryColor, secondaryColor }: RealtimeStatsProps) {
+export function RealtimeStats({ initialStats }: RealtimeStatsProps) {
   const [stats, setStats] = useState<Stats>(initialStats);
 
   useEffect(() => {
@@ -133,32 +131,36 @@ export function RealtimeStats({ initialStats, primaryColor, secondaryColor }: Re
       title: "Active Jobs",
       value: stats.activeJobs.toString(),
       icon: "briefcase",
-      color: `text-${secondaryColor}`,
-      bgColor: `bg-${secondaryColor}/10`,
+      color: "text-brand-pink",
+      bgColor: "bg-brand-pink",
+      iconBgColor: "bg-white",
       href: "/schedule/jobs",
     },
     {
       title: "Total Candidates",
       value: stats.totalCandidates.toString(),
       icon: "users",
-      color: `text-${primaryColor}`,
-      bgColor: `bg-${primaryColor}/10`,
+      color: "text-brand-teal",
+      bgColor: "bg-brand-teal",
+      iconBgColor: "bg-white",
       href: "/schedule/candidates",
     },
     {
       title: "Scheduled Interviews",
       value: stats.scheduledInterviews.toString(),
       icon: "calendar",
-      color: `text-${primaryColor}`,
-      bgColor: `bg-${primaryColor}/10`,
+      color: "text-brand-green",
+      bgColor: "bg-brand-green",
+      iconBgColor: "bg-white",
       href: "/schedule/interviews",
     },
     {
       title: "Avg. AI Score",
       value: stats.avgAiScore !== null ? `${stats.avgAiScore}%` : "-",
       icon: "trending-up",
-      color: `text-${secondaryColor}`,
-      bgColor: `bg-${secondaryColor}/10`,
+      color: "text-brand-gold",
+      bgColor: "bg-brand-gold",
+      iconBgColor: "bg-white",
       href: "/schedule/candidates",
     },
   ];
@@ -168,30 +170,31 @@ export function RealtimeStats({ initialStats, primaryColor, secondaryColor }: Re
       {statCards.map((stat) => (
         <Link key={stat.title} href={stat.href}>
           <Card className={cn(
-            "border-border/50 hover:border-${primaryColor}/50 transition-all duration-200 hover:shadow-lg group cursor-pointer",
-            "bg-background"
+            "border-border/50 transition-all duration-200 group cursor-pointer",
+            "shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] hover:shadow-xl",
+            stat.bgColor
           )}>
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className={cn(
                     "p-2.5 rounded-lg group-hover:scale-110 transition-transform duration-200",
-                    stat.bgColor
+                    stat.iconBgColor
                   )}>
                     <Icon name={stat.icon} size={20} className={stat.color} />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground font-medium mb-1">
+                    <p className="text-xs text-brand-charcoal/70 font-medium mb-1">
                       {stat.title}
                     </p>
-                    <p className="text-2xl font-bold text-foreground">
+                    <p className="text-2xl font-bold text-brand-charcoal">
                       {stat.value}
                     </p>
                   </div>
                 </div>
                 <ArrowRight className={cn(
-                  "h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200",
-                  `group-hover:text-${primaryColor}`
+                  "h-4 w-4 text-brand-charcoal/50 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200",
+                  stat.color
                 )} />
               </div>
             </CardContent>

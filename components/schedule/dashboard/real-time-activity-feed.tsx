@@ -33,18 +33,37 @@ const getActivityColors = (primaryColor: string, secondaryColor: string): Record
   "job.published": "text-brand-green",
   "job.paused": `text-${primaryColor}`,
   "job.closed": "text-muted-foreground",
-  "candidate.applied": "text-brand-green",
+  "candidate.applied": "text-brand-teal",
   "candidate.scoring": `text-${secondaryColor}`,
-  "candidate.scored": `text-${secondaryColor}`,
+  "candidate.scored": "text-brand-gold",
   "candidate.invited": `text-${primaryColor}`,
-  "candidate.scheduled": `text-${secondaryColor}`,
+  "candidate.scheduled": "text-brand-pink",
   "candidate.interviewed": "text-brand-green",
   "candidate.hired": "text-brand-green",
   "candidate.rejected": "text-muted-foreground",
-  "interview.scheduled": `text-${secondaryColor}`,
+  "interview.scheduled": "text-brand-pink",
   "interview.confirmed": "text-brand-green",
   "interview.completed": "text-brand-green",
   "interview.cancelled": "text-muted-foreground",
+});
+
+const getActivityBgColors = (): Record<ActivityAction, string> => ({
+  "job.created": "bg-muted",
+  "job.published": "bg-brand-green/20",
+  "job.paused": "bg-muted",
+  "job.closed": "bg-muted",
+  "candidate.applied": "bg-brand-teal/30",
+  "candidate.scoring": "bg-muted",
+  "candidate.scored": "bg-brand-gold/30",
+  "candidate.invited": "bg-muted",
+  "candidate.scheduled": "bg-brand-pink/30",
+  "candidate.interviewed": "bg-brand-green/20",
+  "candidate.hired": "bg-brand-green/20",
+  "candidate.rejected": "bg-muted",
+  "interview.scheduled": "bg-brand-pink/30",
+  "interview.confirmed": "bg-brand-green/20",
+  "interview.completed": "bg-brand-green/20",
+  "interview.cancelled": "bg-muted",
 });
 
 const activityLabels: Record<ActivityAction, string> = {
@@ -92,6 +111,7 @@ interface RealTimeActivityFeedProps {
 export function RealTimeActivityFeed({ limit = 10, primaryColor, secondaryColor }: RealTimeActivityFeedProps) {
   const { activities, isLoading } = useRealtimeActivity(limit);
   const activityColors = getActivityColors(primaryColor, secondaryColor);
+  const activityBgColors = getActivityBgColors();
 
   if (isLoading) {
     return (
@@ -138,7 +158,7 @@ export function RealTimeActivityFeed({ limit = 10, primaryColor, secondaryColor 
   }
 
   return (
-    <Card>
+    <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">Live Activity</CardTitle>
@@ -156,24 +176,25 @@ export function RealTimeActivityFeed({ limit = 10, primaryColor, secondaryColor 
           {activities.map((activity) => {
             const iconName = activityIconMap[activity.action] || "workflow";
             const iconColor = activityColors[activity.action] || "text-foreground";
+            const bgColor = activityBgColors[activity.action] || "bg-muted";
             const label = activityLabels[activity.action] || activity.action;
 
             return (
               <div
                 key={activity.id}
-                className="flex items-start gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors animate-in fade-in slide-in-from-right-2 duration-300"
+                className={`flex items-start gap-4 p-3 rounded-lg transition-colors animate-in fade-in slide-in-from-right-2 duration-300 ${bgColor}`}
               >
-                <div className={`p-2 rounded-full bg-muted`}>
-                  <Icon name={iconName} size={16} className={iconColor} />
+                <div className="w-10 h-10 flex items-center justify-center rounded-full bg-white/90 flex-shrink-0">
+                  <Icon name={iconName} size={18} className={iconColor} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-foreground">
+                      <p className="text-sm font-medium text-brand-charcoal">
                         {label}
                       </p>
                       {activity.metadata && (
-                        <p className="text-sm text-muted-foreground mt-0.5">
+                        <p className="text-sm text-brand-charcoal/70 mt-0.5">
                           {typeof activity.metadata.candidate_name === 'string' &&
                             `${activity.metadata.candidate_name}`}
                           {typeof activity.metadata.job_title === 'string' &&
@@ -181,8 +202,8 @@ export function RealTimeActivityFeed({ limit = 10, primaryColor, secondaryColor 
                         </p>
                       )}
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground whitespace-nowrap">
-                      <Icon name="workflow" size={12} className="text-muted-foreground" />
+                    <div className="flex items-center gap-1 text-xs text-brand-charcoal/60 whitespace-nowrap">
+                      <Icon name="workflow" size={12} className="text-brand-charcoal/60" />
                       {formatTimeAgo(activity.created_at)}
                     </div>
                   </div>
