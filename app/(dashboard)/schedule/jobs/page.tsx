@@ -2,6 +2,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Icon } from "@/components/ui/icon";
 import {
   Table,
   TableBody,
@@ -17,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { JobStatusBadge } from "@/components/schedule/jobs/JobStatusBadge";
+import { getAgent } from "@/lib/constants/agents";
 import {
   Plus,
   MoreHorizontal,
@@ -31,6 +34,9 @@ export const dynamic = "force-dynamic";
 
 export default async function JobsPage() {
   const supabase = await createClient();
+  const agent = getAgent("schedule");
+  const primaryColor = agent?.primaryColor || "brand-pink";
+  const secondaryColor = agent?.secondaryColor || "brand-teal";
 
   const { data: jobs, error } = await supabase
     .from("jobs")
@@ -43,22 +49,90 @@ export default async function JobsPage() {
 
   const jobsList = jobs || [];
 
+  // Calculate stats
+  const totalJobs = jobsList.length;
+  const activeJobs = jobsList.filter(j => j.status === "active").length;
+  const draftJobs = jobsList.filter(j => j.status === "draft").length;
+  const closedJobs = jobsList.filter(j => j.status === "closed").length;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className={`flex flex-col sm:flex-row bg-${primaryColor} rounded-xl p-4 sm:items-center sm:justify-between gap-4`}>
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Jobs</h2>
-          <p className="text-muted-foreground">
-            Manage your job postings and view candidates
+          <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
+            <Icon name="briefcase" size={32} className="text-white" />
+            Job Openings
+          </h1>
+          <p className="text-white/80 mt-1">
+            Manage your job postings and track applications
           </p>
         </div>
         <Link href="/schedule/jobs/new">
-          <Button className="bg-brand-gold hover:bg-brand-gold/90 text-brand-charcoal">
+          <Button className={`bg-${secondaryColor} hover:brightness-110 text-brand-charcoal transition-all`}>
             <Plus className="h-4 w-4 mr-2" />
             Create Job
           </Button>
         </Link>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="bg-brand-pink shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="briefcase" size={20} className="text-brand-pink" />
+              </div>
+              <div>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Total Jobs</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{totalJobs}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-brand-green shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="trending-up" size={20} className="text-brand-green" />
+              </div>
+              <div>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Active</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{activeJobs}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-brand-gold shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="workflow" size={20} className="text-brand-gold" />
+              </div>
+              <div>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Draft</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{draftJobs}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-brand-teal shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="checklist" size={20} className="text-brand-teal" />
+              </div>
+              <div>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Closed</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{closedJobs}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Jobs Table or Empty State */}
@@ -84,9 +158,17 @@ export default async function JobsPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">All Jobs ({jobsList.length})</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Icon name="briefcase" size={20} className={`text-${primaryColor}`} />
+                All Jobs ({jobsList.length})
+              </CardTitle>
+              <Badge variant="outline" className="bg-brand-green/10 text-brand-green border-brand-green/20">
+                {activeJobs} Active
+              </Badge>
+            </div>
           </CardHeader>
           <CardContent className="p-0">
             <Table>
