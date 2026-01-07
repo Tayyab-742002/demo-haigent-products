@@ -24,8 +24,8 @@ export interface Agent {
   shortName: string;
   description: string;
   icon: LucideIcon;
-  color: string;
-  bgColor: string;
+  primaryColor: string;
+  secondaryColor: string;
   href: string;
   isActive: boolean;
 }
@@ -37,10 +37,10 @@ export const agents: Agent[] = [
     shortName: "Schedule",
     description: "AI-powered interview scheduling",
     icon: Calendar,
-    color: "text-brand-pink",
-    bgColor: "bg-brand-pink",
+    primaryColor: "brand-pink",
+    secondaryColor: "brand-teal",
     href: "/schedule",
-    isActive: true, // First agent to be built
+    isActive: true,
   },
   {
     id: "sourcing",
@@ -48,8 +48,8 @@ export const agents: Agent[] = [
     shortName: "Sourcing",
     description: "Intelligent talent sourcing",
     icon: Search,
-    color: "text-brand-teal",
-    bgColor: "bg-brand-teal",
+    primaryColor: "brand-gold",
+    secondaryColor: "brand-pink",
     href: "/sourcing",
     isActive: false,
   },
@@ -59,8 +59,8 @@ export const agents: Agent[] = [
     shortName: "Reference",
     description: "Automated reference checks",
     icon: ClipboardCheck,
-    color: "text-brand-green",
-    bgColor: "bg-brand-green",
+    primaryColor: "brand-teal",
+    secondaryColor: "brand-pink",
     href: "/reference",
     isActive: false,
   },
@@ -70,8 +70,8 @@ export const agents: Agent[] = [
     shortName: "Onboarding",
     description: "Streamlined employee onboarding",
     icon: UserPlus,
-    color: "text-brand-gold",
-    bgColor: "bg-brand-gold",
+    primaryColor: "brand-green",
+    secondaryColor: "brand-pink",
     href: "/onboarding",
     isActive: false,
   },
@@ -81,8 +81,8 @@ export const agents: Agent[] = [
     shortName: "Benefits",
     description: "Benefits administration",
     icon: Heart,
-    color: "text-brand-pink",
-    bgColor: "bg-brand-pink",
+    primaryColor: "brand-pink",
+    secondaryColor: "brand-gold",
     href: "/benefits",
     isActive: false,
   },
@@ -92,8 +92,8 @@ export const agents: Agent[] = [
     shortName: "Payroll",
     description: "Payroll automation",
     icon: DollarSign,
-    color: "text-brand-teal",
-    bgColor: "bg-brand-teal",
+    primaryColor: "brand-teal",
+    secondaryColor: "brand-gold",
     href: "/payroll",
     isActive: false,
   },
@@ -103,8 +103,8 @@ export const agents: Agent[] = [
     shortName: "Engee",
     description: "Employee engagement",
     icon: Users,
-    color: "text-brand-green",
-    bgColor: "bg-brand-green",
+    primaryColor: "brand-green",
+    secondaryColor: "brand-gold",
     href: "/engee",
     isActive: false,
   },

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Lato, Source_Sans_3 } from "next/font/google";
+import { ToastProvider } from "@/components/providers/toast-provider";
 import "./globals.css";
 
 const lato = Lato({
@@ -34,6 +35,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${lato.variable} ${sourceSans.variable} antialiased`}>
         {children}
+        <ToastProvider />
       </body>
     </html>
   );
