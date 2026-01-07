@@ -304,7 +304,7 @@ export function JobForm({ initialData, mode = "create" }: JobFormProps) {
               id="score_threshold"
               min="0"
               max="100"
-              className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-brand-gold"
+              className="w-full"
               {...register("score_threshold", { valueAsNumber: true })}
             />
             <p className="text-xs text-muted-foreground">
