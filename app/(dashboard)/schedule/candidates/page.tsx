@@ -52,70 +52,73 @@ export default async function CandidatesPage() {
   const scheduledCandidates = candidatesList.filter((c) => c.status === "scheduled").length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className={`flex flex-col sm:flex-row bg-${primaryColor} rounded-xl p-4 sm:items-center sm:justify-between gap-4`}>
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Candidates</h2>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
+            <Icon name="users" size={32} className="text-white" />
+            Candidates
+          </h1>
+          <p className="text-white/80 mt-1">
             View and manage all candidate applications
           </p>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="pt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="bg-brand-teal shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg bg-${primaryColor}/10`}>
-                <Icon name="users" size={20} className={`text-${primaryColor}`} />
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="users" size={20} className="text-brand-teal" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{totalCandidates}</p>
-                <p className="text-sm text-muted-foreground">Total Candidates</p>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Total Candidates</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{totalCandidates}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
+        <Card className="bg-brand-gold shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg bg-${secondaryColor}/10`}>
-                <Icon name="analytics" size={20} className={`text-${secondaryColor}`} />
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="analytics" size={20} className="text-brand-gold" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{scoredCandidates}</p>
-                <p className="text-sm text-muted-foreground">AI Scored</p>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">AI Scored</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{scoredCandidates}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
+        <Card className="bg-brand-pink shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg bg-${primaryColor}/10`}>
-                <Icon name="communication" size={20} className={`text-${primaryColor}`} />
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="communication" size={20} className="text-brand-pink" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{invitedCandidates}</p>
-                <p className="text-sm text-muted-foreground">Invited</p>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Invited</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{invitedCandidates}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
+        <Card className="bg-brand-green shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-brand-green/10">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
                 <Icon name="checklist" size={20} className="text-brand-green" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{scheduledCandidates}</p>
-                <p className="text-sm text-muted-foreground">Scheduled</p>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Scheduled</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{scheduledCandidates}</p>
               </div>
             </div>
           </CardContent>
@@ -145,11 +148,17 @@ export default async function CandidatesPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">
-              All Candidates ({candidatesList.length})
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Icon name="users" size={20} className={`text-${primaryColor}`} />
+                All Candidates ({candidatesList.length})
+              </CardTitle>
+              <Badge variant="outline" className="bg-brand-green/10 text-brand-green border-brand-green/20">
+                {scheduledCandidates} Scheduled
+              </Badge>
+            </div>
           </CardHeader>
           <CardContent className="p-0">
             <Table>

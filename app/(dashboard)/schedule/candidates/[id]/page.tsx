@@ -31,6 +31,8 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { CandidateStatusUpdate } from "@/components/schedule/candidates/CandidateStatusUpdate";
+import { Icon } from "@/components/ui/icon";
+import { getAgent } from "@/lib/constants/agents";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +43,9 @@ interface CandidateDetailPageProps {
 export default async function CandidateDetailPage({ params }: CandidateDetailPageProps) {
   const { id } = await params;
   const supabase = await createClient();
+  const agent = getAgent("schedule");
+  const primaryColor = agent?.primaryColor || "brand-pink";
+  const secondaryColor = agent?.secondaryColor || "brand-teal";
 
   // Fetch candidate with job info
   const { data: candidate, error } = await supabase
@@ -95,25 +100,30 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
     : false;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className={`flex flex-col sm:flex-row bg-${primaryColor} rounded-xl p-6 sm:items-center sm:justify-between gap-4`}>
         <div className="flex items-center gap-4">
           <Link href={`/schedule/jobs/${candidate.job_id}`}>
-            <Button variant="ghost" size="icon">
+            <Button
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30 transition-all rounded-lg h-10 w-10 p-0 flex items-center justify-center"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
           <div className="flex items-center gap-4">
             <ScoreBadge score={candidate.ai_score} size="lg" />
             <div>
-              <h2 className="text-2xl font-bold text-foreground">{candidate.name}</h2>
+              <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
+                <Icon name="user" size={32} className="text-white" />
+                {candidate.name}
+              </h1>
               <div className="flex items-center gap-3 mt-1">
                 <CandidateStatusBadge status={candidate.status} />
                 {candidate.jobs && (
                   <Link
                     href={`/schedule/jobs/${candidate.job_id}`}
-                    className="text-sm text-muted-foreground hover:text-brand-teal transition-colors"
+                    className="text-sm text-white/80 hover:text-white transition-colors"
                   >
                     {candidate.jobs.title}
                   </Link>
@@ -128,64 +138,68 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
       </div>
 
       {/* Quick Info Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="pt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="bg-brand-gold shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-brand-gold/10">
-                <TrendingUp className="h-5 w-5 text-brand-gold" />
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="analytics" size={20} className="text-brand-gold" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{candidate.ai_score ?? "-"}</p>
-                <p className="text-sm text-muted-foreground">AI Score</p>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">AI Score</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{candidate.ai_score ?? "-"}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
+        <Card className={`${meetsThreshold ? "bg-brand-green" : "bg-brand-pink"} shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50`}>
+          <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${meetsThreshold ? "bg-brand-green/10" : "bg-brand-pink/10"}`}>
-                {meetsThreshold ? (
-                  <CheckCircle className="h-5 w-5 text-brand-green" />
-                ) : (
-                  <XCircle className="h-5 w-5 text-brand-pink" />
-                )}
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name={meetsThreshold ? "approval" : "cancel"} size={20} className={meetsThreshold ? "text-brand-green" : "text-brand-pink"} />
               </div>
               <div>
-                <p className="text-2xl font-bold">{candidate.jobs?.score_threshold ?? 70}%</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">
                   {meetsThreshold ? "Above Threshold" : "Below Threshold"}
                 </p>
+                <p className="text-2xl font-bold text-brand-charcoal">{candidate.jobs?.score_threshold ?? 70}%</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
+        <Card className="bg-brand-teal shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-brand-teal/10">
-                <Calendar className="h-5 w-5 text-brand-teal" />
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="calendar" size={20} className="text-brand-teal" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{interviewsList.length}</p>
-                <p className="text-sm text-muted-foreground">Interviews</p>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Interviews</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{interviewsList.length}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
+        <Card className={`${
+          recommendationConfig.label === "Proceed" ? "bg-brand-green" :
+          recommendationConfig.label === "Maybe" ? "bg-brand-gold" :
+          recommendationConfig.label === "Skip" ? "bg-brand-pink" : "bg-muted"
+        } shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50`}>
+          <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${recommendationConfig.color.split(" ")[0]}`}>
-                <RecommendationIcon className={`h-5 w-5 ${recommendationConfig.color.split(" ")[1]}`} />
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <RecommendationIcon className={`h-5 w-5 ${
+                  recommendationConfig.label === "Proceed" ? "text-brand-green" :
+                  recommendationConfig.label === "Maybe" ? "text-brand-gold" :
+                  recommendationConfig.label === "Skip" ? "text-brand-pink" : "text-muted-foreground"
+                }`} />
               </div>
               <div>
-                <p className="text-lg font-bold">{recommendationConfig.label}</p>
-                <p className="text-sm text-muted-foreground">AI Recommendation</p>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">AI Recommendation</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{recommendationConfig.label}</p>
               </div>
             </div>
           </CardContent>
@@ -193,23 +207,48 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="profile" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="ai-analysis">AI Analysis</TabsTrigger>
-          <TabsTrigger value="resume">Resume & Cover Letter</TabsTrigger>
-          <TabsTrigger value="interviews">
+      <Tabs defaultValue="profile" className="space-y-6">
+        <TabsList className="bg-muted/50 p-1.5 h-auto rounded-xl">
+          <TabsTrigger
+            value="profile"
+            className="data-[state=active]:bg-brand-teal data-[state=active]:text-white rounded-lg px-6 py-2.5 font-medium transition-all"
+          >
+            <Icon name="user" size={16} className="mr-2" />
+            Profile
+          </TabsTrigger>
+          <TabsTrigger
+            value="ai-analysis"
+            className="data-[state=active]:bg-brand-gold data-[state=active]:text-brand-charcoal rounded-lg px-6 py-2.5 font-medium transition-all"
+          >
+            <Icon name="analytics" size={16} className="mr-2" />
+            AI Analysis
+          </TabsTrigger>
+          <TabsTrigger
+            value="resume"
+            className="data-[state=active]:bg-brand-pink data-[state=active]:text-white rounded-lg px-6 py-2.5 font-medium transition-all"
+          >
+            <Icon name="document" size={16} className="mr-2" />
+            Resume & Cover Letter
+          </TabsTrigger>
+          <TabsTrigger
+            value="interviews"
+            className="data-[state=active]:bg-brand-green data-[state=active]:text-white rounded-lg px-6 py-2.5 font-medium transition-all"
+          >
+            <Icon name="calendar" size={16} className="mr-2" />
             Interviews ({interviewsList.length})
           </TabsTrigger>
         </TabsList>
 
         {/* Profile Tab */}
-        <TabsContent value="profile" className="space-y-4">
+        <TabsContent value="profile" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Contact Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Contact Information</CardTitle>
+            <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Icon name="communication" size={20} className="text-brand-teal" />
+                  Contact Information
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -268,9 +307,12 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
             </Card>
 
             {/* Professional Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Professional Information</CardTitle>
+            <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Icon name="briefcase" size={20} className="text-brand-gold" />
+                  Professional Information
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {candidate.current_title && (
@@ -313,9 +355,12 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
 
           {/* Applied Position */}
           {candidate.jobs && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Applied Position</CardTitle>
+            <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Icon name="target" size={20} className="text-brand-pink" />
+                  Applied Position
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
@@ -344,14 +389,14 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
         </TabsContent>
 
         {/* AI Analysis Tab */}
-        <TabsContent value="ai-analysis" className="space-y-4">
+        <TabsContent value="ai-analysis" className="space-y-6">
           {candidate.ai_score ? (
             <>
               {/* AI Reasoning */}
-              <Card>
-                <CardHeader>
+              <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+                <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <Zap className="h-5 w-5 text-brand-gold" />
+                    <Icon name="analytics" size={20} className="text-brand-gold" />
                     AI Analysis Summary
                   </CardTitle>
                   {candidate.scored_at && (
@@ -369,8 +414,8 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Strengths */}
-                <Card className="border-brand-green/30">
-                  <CardHeader>
+                <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+                  <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2 text-brand-green">
                       <TrendingUp className="h-5 w-5" />
                       Strengths
@@ -393,8 +438,8 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
                 </Card>
 
                 {/* Gaps */}
-                <Card className="border-brand-pink/30">
-                  <CardHeader>
+                <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+                  <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2 text-brand-pink">
                       <TrendingDown className="h-5 w-5" />
                       Areas for Improvement
@@ -418,9 +463,12 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
               </div>
 
               {/* Score Breakdown */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Score Details</CardTitle>
+              <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Icon name="analytics" size={20} className="text-brand-teal" />
+                    Score Details
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-6">
@@ -471,13 +519,13 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
         </TabsContent>
 
         {/* Resume & Cover Letter Tab */}
-        <TabsContent value="resume" className="space-y-4">
+        <TabsContent value="resume" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Resume */}
-            <Card>
-              <CardHeader>
+            <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+              <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-brand-gold" />
+                  <Icon name="document" size={20} className="text-brand-gold" />
                   Resume
                 </CardTitle>
               </CardHeader>
@@ -522,10 +570,10 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
             </Card>
 
             {/* Cover Letter */}
-            <Card>
-              <CardHeader>
+            <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+              <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-brand-teal" />
+                  <Icon name="communication" size={20} className="text-brand-teal" />
                   Cover Letter
                 </CardTitle>
               </CardHeader>
@@ -548,12 +596,12 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
         </TabsContent>
 
         {/* Interviews Tab */}
-        <TabsContent value="interviews" className="space-y-4">
+        <TabsContent value="interviews" className="space-y-6">
           {interviewsList.length === 0 ? (
-            <Card className="border-dashed">
+            <Card className="border-dashed shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
               <CardContent className="flex flex-col items-center justify-center py-16">
-                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                  <Calendar className="h-8 w-8 text-muted-foreground" />
+                <div className="w-16 h-16 rounded-full bg-brand-green/10 flex items-center justify-center mb-4">
+                  <Icon name="calendar" size={32} className="text-brand-green" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
                   No Interviews Scheduled
@@ -568,8 +616,8 @@ export default async function CandidateDetailPage({ params }: CandidateDetailPag
           ) : (
             <div className="space-y-4">
               {interviewsList.map((interview) => (
-                <Card key={interview.id}>
-                  <CardContent className="py-4">
+                <Card key={interview.id} className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+                  <CardContent className="py-5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="p-3 rounded-lg bg-brand-teal/10">

@@ -51,6 +51,7 @@ export const iconMap = {
   "workflow": "workflow-process",
   "checklist": "checklist",
   "approval": "user-approval",
+  "document": "user-checklist",
 
   // Organization
   "organization": "organization",
