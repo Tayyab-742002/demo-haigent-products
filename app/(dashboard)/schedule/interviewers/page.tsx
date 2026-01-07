@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -12,7 +12,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Users,
   Plus,
   Mail,
   Briefcase,
@@ -24,11 +23,16 @@ import {
   Link as LinkIcon,
   AlertCircle,
 } from "lucide-react";
+import { Icon } from "@/components/ui/icon";
+import { getAgent } from "@/lib/constants/agents";
 
 export const dynamic = "force-dynamic";
 
 export default async function InterviewersPage() {
   const supabase = await createClient();
+  const agent = getAgent("schedule");
+  const primaryColor = agent?.primaryColor || "brand-pink";
+  const secondaryColor = agent?.secondaryColor || "brand-teal";
 
   // Fetch interviewers
   const { data: interviewers } = await supabase
@@ -64,64 +68,98 @@ export default async function InterviewersPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Interviewers</h2>
-          <p className="text-muted-foreground">
-            Manage your interview team and availability
-          </p>
+      <div className={`bg-${primaryColor} rounded-xl p-6`}>
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex-1" />
+          <Link href="/schedule/interviewers/new">
+            <Button className="bg-white text-brand-charcoal hover:bg-white/90">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Interviewer
+            </Button>
+          </Link>
         </div>
-        <Link href="/schedule/interviewers/new">
-          <Button className="bg-brand-gold hover:bg-brand-gold/90 text-brand-charcoal">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Interviewer
-          </Button>
-        </Link>
+        <div className="flex items-center gap-4">
+          <Icon name="team" size={48} className="text-white" />
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-white">
+              Interviewers
+            </h1>
+            <p className="text-white/80 text-lg mt-1">
+              Manage your interview team and availability
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold">{interviewersList.length}</div>
-            <p className="text-sm text-muted-foreground">Total Interviewers</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold">{activeInterviewers.length}</div>
-            <p className="text-sm text-muted-foreground">Active</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <div className="text-2xl font-bold">{calConnectedInterviewers.length}</div>
-              {calConnectedInterviewers.length > 0 && (
-                <LinkIcon className="h-4 w-4 text-brand-teal" />
-              )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="bg-brand-teal shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="team" size={20} className="text-brand-teal" />
+              </div>
+              <div>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Total Interviewers</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{interviewersList.length}</p>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">Cal.com Connected</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold">
-              {interviewCounts?.filter((i) => i.status === "completed").length || 0}
+
+        <Card className="bg-brand-green shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="approval" size={20} className="text-brand-green" />
+              </div>
+              <div>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Active</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{activeInterviewers.length}</p>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">Completed Interviews</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-brand-gold shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="network" size={20} className="text-brand-gold" />
+              </div>
+              <div>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Cal.com Connected</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{calConnectedInterviewers.length}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className={`bg-${primaryColor} shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50`}>
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="calendar" size={20} className={`text-${primaryColor}`} />
+              </div>
+              <div>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Completed Interviews</p>
+                <p className="text-2xl font-bold text-brand-charcoal">
+                  {interviewCounts?.filter((i) => i.status === "completed").length || 0}
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Interviewers List */}
       {interviewersList.length === 0 ? (
-        <Card className="border-dashed">
+        <Card className="border-dashed shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
           <CardContent className="flex flex-col items-center justify-center py-16">
-            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-              <Users className="h-8 w-8 text-muted-foreground" />
+            <div className="w-16 h-16 rounded-full bg-brand-teal/10 flex items-center justify-center mb-4">
+              <Icon name="team" size={32} className="text-brand-teal" />
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-2">
               No interviewers yet
@@ -130,7 +168,7 @@ export default async function InterviewersPage() {
               Add your team members who will conduct interviews with candidates.
             </p>
             <Link href="/schedule/interviewers/new">
-              <Button className="bg-brand-gold hover:bg-brand-gold/90 text-brand-charcoal">
+              <Button className={`bg-${secondaryColor} hover:brightness-110 text-brand-charcoal`}>
                 <Plus className="h-4 w-4 mr-2" />
                 Add First Interviewer
               </Button>
@@ -138,7 +176,13 @@ export default async function InterviewersPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Icon name="team" size={20} className="text-brand-teal" />
+              All Interviewers ({interviewersList.length})
+            </CardTitle>
+          </CardHeader>
           <CardContent className="p-0">
             <Table>
               <TableHeader>
@@ -248,7 +292,7 @@ export default async function InterviewersPage() {
       )}
 
       {/* Auto-Scheduling Info */}
-      <Card className="border-brand-gold/30 bg-brand-gold/5">
+      <Card className="border-brand-gold/30 bg-brand-gold/5 shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
         <CardContent className="py-6">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center flex-shrink-0">
@@ -270,7 +314,7 @@ export default async function InterviewersPage() {
       </Card>
 
       {/* Availability Info */}
-      <Card className="bg-muted/30 border-dashed">
+      <Card className="bg-muted/30 border-dashed shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
         <CardContent className="py-6">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-full bg-brand-teal/20 flex items-center justify-center flex-shrink-0">

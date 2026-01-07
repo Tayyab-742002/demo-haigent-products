@@ -48,6 +48,8 @@ import {
   ThumbsDown,
   AlertCircle,
 } from "lucide-react";
+import { Icon } from "@/components/ui/icon";
+import { getAgent } from "@/lib/constants/agents";
 import type { FeedbackRecommendation } from "@/lib/types";
 
 const feedbackSchema = z.object({
@@ -132,6 +134,8 @@ interface FeedbackPageProps {
 export default function InterviewFeedbackPage({ params }: FeedbackPageProps) {
   const { id } = use(params);
   const router = useRouter();
+  const agent = getAgent("schedule");
+  const primaryColor = agent?.primaryColor || "brand-pink";
   const [interview, setInterview] = useState<InterviewWithDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -304,34 +308,42 @@ export default function InterviewFeedbackPage({ params }: FeedbackPageProps) {
   const alreadySubmitted = !!interview.feedback_submitted_at;
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link href="/schedule/interviews">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold text-foreground">
-            Interview Feedback
-          </h2>
-          <p className="text-muted-foreground">
-            {alreadySubmitted ? "View submitted feedback" : "Submit your feedback for this interview"}
-          </p>
+      <div className={`bg-${primaryColor} rounded-xl p-6`}>
+        <div className="flex items-start justify-between mb-4">
+          <Link href="/schedule/interviews">
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          {alreadySubmitted && (
+            <Badge className="bg-white/20 text-white border-white/30">
+              <CheckCircle className="h-3 w-3 mr-1" />
+              Submitted
+            </Badge>
+          )}
         </div>
-        {alreadySubmitted && (
-          <Badge className="bg-brand-green/10 text-brand-green border-brand-green/20">
-            <CheckCircle className="h-3 w-3 mr-1" />
-            Submitted
-          </Badge>
-        )}
+        <div className="flex items-center gap-4">
+          <Icon name="communication" size={48} className="text-white" />
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-white">
+              Interview Feedback
+            </h1>
+            <p className="text-white/80 text-lg mt-1">
+              {alreadySubmitted ? "View submitted feedback" : "Submit your feedback for this interview"}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Interview Summary */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Interview Details</CardTitle>
+      <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Icon name="calendar" size={20} className="text-brand-teal" />
+            Interview Details
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -429,10 +441,10 @@ export default function InterviewFeedbackPage({ params }: FeedbackPageProps) {
       {/* Feedback Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Rating */}
-        <Card>
-          <CardHeader>
+        <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+          <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
-              <Star className="h-5 w-5 text-brand-gold" />
+              <Icon name="analytics" size={20} className="text-brand-gold" />
               Overall Rating
             </CardTitle>
             <CardDescription>
@@ -473,9 +485,12 @@ export default function InterviewFeedbackPage({ params }: FeedbackPageProps) {
         </Card>
 
         {/* Recommendation */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Hiring Recommendation</CardTitle>
+        <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Icon name="approval" size={20} className="text-brand-green" />
+              Hiring Recommendation
+            </CardTitle>
             <CardDescription>
               What is your recommendation for this candidate?
             </CardDescription>
@@ -519,9 +534,12 @@ export default function InterviewFeedbackPage({ params }: FeedbackPageProps) {
         </Card>
 
         {/* Notes */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Detailed Feedback</CardTitle>
+        <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Icon name="communication" size={20} className="text-brand-teal" />
+              Detailed Feedback
+            </CardTitle>
             <CardDescription>
               Provide specific observations, strengths, and areas for improvement
             </CardDescription>

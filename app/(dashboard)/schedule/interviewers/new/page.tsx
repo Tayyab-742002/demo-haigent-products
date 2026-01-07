@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ArrowLeft, Loader2, Save, Zap, Calendar, Key, Link as LinkIcon, Eye, EyeOff } from "lucide-react";
+import { Icon } from "@/components/ui/icon";
+import { getAgent } from "@/lib/constants/agents";
 
 const interviewerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -29,6 +31,9 @@ type InterviewerFormData = z.infer<typeof interviewerSchema>;
 
 export default function NewInterviewerPage() {
   const router = useRouter();
+  const agent = getAgent("schedule");
+  const primaryColor = agent?.primaryColor || "brand-pink";
+  const secondaryColor = agent?.secondaryColor || "brand-teal";
   const [isLoading, setIsLoading] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
 
@@ -86,27 +91,35 @@ export default function NewInterviewerPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-8 max-w-2xl">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link href="/schedule/interviewers">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Add Interviewer</h2>
-          <p className="text-muted-foreground">
-            Add a team member who will conduct interviews
-          </p>
+      <div className={`bg-${primaryColor} rounded-xl p-6`}>
+        <div className="flex items-start justify-between mb-4">
+          <Link href="/schedule/interviewers">
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+        </div>
+        <div className="flex items-center gap-4">
+          <Icon name="user-plus" size={48} className="text-white" />
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-white">Add Interviewer</h1>
+            <p className="text-white/80 text-lg mt-1">
+              Add a team member who will conduct interviews
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Interviewer Details</CardTitle>
+        <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Icon name="user" size={20} className="text-brand-teal" />
+              Interviewer Details
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -167,10 +180,10 @@ export default function NewInterviewerPage() {
         </Card>
 
         {/* Cal.com Integration */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-brand-gold" />
+        <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Icon name="network" size={20} className="text-brand-gold" />
               Cal.com Integration
             </CardTitle>
             <CardDescription>
@@ -282,7 +295,7 @@ export default function NewInterviewerPage() {
         </Card>
 
         {/* Auto-scheduling info */}
-        <Card className="border-brand-gold/30 bg-brand-gold/5">
+        <Card className="border-brand-gold/30 bg-brand-gold/5 shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
           <CardContent className="py-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center flex-shrink-0">
@@ -311,7 +324,7 @@ export default function NewInterviewerPage() {
           </Button>
           <Button
             type="submit"
-            className="bg-brand-gold hover:bg-brand-gold/90 text-brand-charcoal"
+            className={`bg-${secondaryColor} hover:brightness-110 text-brand-charcoal`}
             disabled={isLoading}
           >
             {isLoading ? (

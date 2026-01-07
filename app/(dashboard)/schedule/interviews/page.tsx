@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -21,6 +21,8 @@ import {
   Plus,
   CalendarDays,
 } from "lucide-react";
+import { Icon } from "@/components/ui/icon";
+import { getAgent } from "@/lib/constants/agents";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +59,9 @@ function InterviewStatusBadge({ status }: { status: InterviewStatus }) {
 
 export default async function InterviewsPage() {
   const supabase = await createClient();
+  const agent = getAgent("schedule");
+  const primaryColor = agent?.primaryColor || "brand-pink";
+  const secondaryColor = agent?.secondaryColor || "brand-teal";
 
   // Fetch interviews with candidate and job info
   const { data: interviews } = await supabase
@@ -90,47 +95,81 @@ export default async function InterviewsPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className={`flex flex-col sm:flex-row bg-${primaryColor} rounded-xl p-4 sm:items-center sm:justify-between gap-4`}>
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Interviews</h2>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
+            <Icon name="calendar" size={32} className="text-white" />
+            Interviews
+          </h1>
+          <p className="text-white/80 mt-1">
             Manage scheduled interviews and view history
           </p>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold">{upcomingInterviews.length}</div>
-            <p className="text-sm text-muted-foreground">Upcoming</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="bg-brand-teal shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="calendar" size={20} className="text-brand-teal" />
+              </div>
+              <div>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Upcoming</p>
+                <p className="text-2xl font-bold text-brand-charcoal">{upcomingInterviews.length}</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold">
-              {interviewsList.filter((i) => i.status === "completed").length}
+
+        <Card className="bg-brand-green shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="approval" size={20} className="text-brand-green" />
+              </div>
+              <div>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Completed</p>
+                <p className="text-2xl font-bold text-brand-charcoal">
+                  {interviewsList.filter((i) => i.status === "completed").length}
+                </p>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">Completed</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold">
-              {interviewsList.filter((i) => i.status === "cancelled").length}
+
+        <Card className="bg-brand-gold shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="cancel" size={20} className="text-brand-gold" />
+              </div>
+              <div>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">Cancelled</p>
+                <p className="text-2xl font-bold text-brand-charcoal">
+                  {interviewsList.filter((i) => i.status === "cancelled").length}
+                </p>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">Cancelled</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold">
-              {interviewsList.filter((i) => i.status === "no_show").length}
+
+        <Card className="bg-brand-pink shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] border-border/50">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white">
+                <Icon name="user" size={20} className="text-brand-pink" />
+              </div>
+              <div>
+                <p className="text-xs text-brand-charcoal/70 font-medium mb-1">No Shows</p>
+                <p className="text-2xl font-bold text-brand-charcoal">
+                  {interviewsList.filter((i) => i.status === "no_show").length}
+                </p>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">No Shows</p>
           </CardContent>
         </Card>
       </div>
@@ -143,10 +182,10 @@ export default async function InterviewsPage() {
         </h3>
 
         {upcomingInterviews.length === 0 ? (
-          <Card className="border-dashed">
+          <Card className="border-dashed shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
             <CardContent className="flex flex-col items-center justify-center py-16">
-              <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                <Calendar className="h-8 w-8 text-muted-foreground" />
+              <div className="w-16 h-16 rounded-full bg-brand-teal/10 flex items-center justify-center mb-4">
+                <Icon name="calendar" size={32} className="text-brand-teal" />
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">
                 No upcoming interviews
@@ -155,7 +194,7 @@ export default async function InterviewsPage() {
                 When candidates book interviews, they will appear here.
               </p>
               <Link href="/schedule/jobs">
-                <Button variant="outline">
+                <Button className={`bg-${secondaryColor} hover:brightness-110 text-brand-charcoal`}>
                   <Plus className="h-4 w-4 mr-2" />
                   View Jobs & Candidates
                 </Button>
@@ -163,7 +202,13 @@ export default async function InterviewsPage() {
             </CardContent>
           </Card>
         ) : (
-          <Card>
+          <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Icon name="calendar" size={20} className="text-brand-teal" />
+                Upcoming Interviews ({upcomingInterviews.length})
+              </CardTitle>
+            </CardHeader>
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
@@ -275,7 +320,13 @@ export default async function InterviewsPage() {
             Past Interviews
           </h3>
 
-          <Card>
+          <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Icon name="calendar" size={20} className="text-muted-foreground" />
+                Past Interviews ({pastInterviews.length})
+              </CardTitle>
+            </CardHeader>
             <CardContent className="p-0">
               <Table>
                 <TableHeader>

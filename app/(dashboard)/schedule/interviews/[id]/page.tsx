@@ -12,11 +12,7 @@ import {
 } from "@/components/ui/card";
 import {
   ArrowLeft,
-  Calendar,
-  Clock,
   Video,
-  User,
-  Briefcase,
   Mail,
   Phone,
   MapPin,
@@ -25,9 +21,10 @@ import {
   MessageSquare,
   CheckCircle,
   XCircle,
-  AlertCircle,
   Globe,
 } from "lucide-react";
+import { Icon } from "@/components/ui/icon";
+import { getAgent } from "@/lib/constants/agents";
 import type { InterviewStatus, FeedbackRecommendation } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -115,6 +112,9 @@ function RecommendationBadge({ recommendation }: { recommendation: FeedbackRecom
 export default async function InterviewDetailPage({ params }: InterviewDetailPageProps) {
   const { id } = await params;
   const supabase = await createClient();
+  const agent = getAgent("schedule");
+  const primaryColor = agent?.primaryColor || "brand-pink";
+  const secondaryColor = agent?.secondaryColor || "brand-teal";
 
   const { data: interview, error } = await supabase
     .from("interviews")
@@ -164,62 +164,65 @@ export default async function InterviewDetailPage({ params }: InterviewDetailPag
   const hasFeedback = !!interview.feedback_submitted_at;
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
+      <div className={`bg-${primaryColor} rounded-xl p-6`}>
+        <div className="flex items-start justify-between mb-4">
           <Link href="/schedule/interviews">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <div>
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-bold text-foreground">
-                Interview Details
-              </h2>
-              <InterviewStatusBadge status={interview.status} />
-            </div>
-            <p className="text-muted-foreground">
-              {job?.title} - {candidate?.name}
-            </p>
+          <div className="flex items-center gap-2">
+            {interview.meeting_link && (
+              <a
+                href={interview.meeting_link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20">
+                  <Video className="h-4 w-4 mr-2" />
+                  Join Meeting
+                </Button>
+              </a>
+            )}
+            <Link href={`/schedule/interviews/${id}/feedback`}>
+              <Button
+                className={
+                  hasFeedback
+                    ? "bg-brand-green hover:bg-brand-green/90 text-white"
+                    : "bg-white text-brand-charcoal hover:bg-white/90"
+                }
+              >
+                {hasFeedback ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    View Feedback
+                  </>
+                ) : (
+                  <>
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    {isPast ? "Submit Feedback" : "Prepare Feedback"}
+                  </>
+                )}
+              </Button>
+            </Link>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {interview.meeting_link && (
-            <a
-              href={interview.meeting_link}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="outline">
-                <Video className="h-4 w-4 mr-2" />
-                Join Meeting
-              </Button>
-            </a>
-          )}
-          <Link href={`/schedule/interviews/${id}/feedback`}>
-            <Button
-              className={
-                hasFeedback
-                  ? "bg-brand-green hover:bg-brand-green/90"
-                  : "bg-brand-gold hover:bg-brand-gold/90 text-brand-charcoal"
-              }
-            >
-              {hasFeedback ? (
-                <>
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  View Feedback
-                </>
-              ) : (
-                <>
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  {isPast ? "Submit Feedback" : "Prepare Feedback"}
-                </>
-              )}
-            </Button>
-          </Link>
+        <div className="flex items-center gap-4">
+          <Icon name="calendar" size={48} className="text-white" />
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-3xl font-bold text-white">
+                Interview Details
+              </h1>
+              <InterviewStatusBadge status={interview.status} />
+            </div>
+            <p className="text-white/80 text-lg">
+              {job?.title} - {candidate?.name}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -227,10 +230,10 @@ export default async function InterviewDetailPage({ params }: InterviewDetailPag
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Schedule Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-brand-gold" />
+          <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Icon name="calendar" size={20} className="text-brand-gold" />
                 Schedule
               </CardTitle>
             </CardHeader>
@@ -293,10 +296,10 @@ export default async function InterviewDetailPage({ params }: InterviewDetailPag
           </Card>
 
           {/* Candidate Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5 text-brand-teal" />
+          <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Icon name="user" size={20} className="text-brand-teal" />
                 Candidate
               </CardTitle>
             </CardHeader>
@@ -386,10 +389,10 @@ export default async function InterviewDetailPage({ params }: InterviewDetailPag
 
           {/* Feedback Summary (if submitted) */}
           {hasFeedback && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5 text-brand-green" />
+            <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Icon name="communication" size={20} className="text-brand-green" />
                   Interview Feedback
                 </CardTitle>
                 <CardDescription>
@@ -434,10 +437,10 @@ export default async function InterviewDetailPage({ params }: InterviewDetailPag
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Position Card */}
-          <Card>
-            <CardHeader>
+          <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+            <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
-                <Briefcase className="h-4 w-4 text-brand-gold" />
+                <Icon name="briefcase" size={16} className="text-brand-gold" />
                 Position
               </CardTitle>
             </CardHeader>
@@ -461,10 +464,10 @@ export default async function InterviewDetailPage({ params }: InterviewDetailPag
           </Card>
 
           {/* Interviewer Card */}
-          <Card>
-            <CardHeader>
+          <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+            <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
-                <User className="h-4 w-4 text-brand-teal" />
+                <Icon name="user" size={16} className="text-brand-teal" />
                 Interviewer
               </CardTitle>
             </CardHeader>
@@ -490,10 +493,10 @@ export default async function InterviewDetailPage({ params }: InterviewDetailPag
           </Card>
 
           {/* Interview Type */}
-          <Card>
-            <CardHeader>
+          <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+            <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
-                <Clock className="h-4 w-4 text-brand-pink" />
+                <Icon name="checklist" size={16} className="text-brand-pink" />
                 Interview Info
               </CardTitle>
             </CardHeader>
@@ -518,10 +521,10 @@ export default async function InterviewDetailPage({ params }: InterviewDetailPag
           </Card>
 
           {/* Reminders Status */}
-          <Card>
-            <CardHeader>
+          <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+            <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
-                <AlertCircle className="h-4 w-4 text-brand-gold" />
+                <Icon name="analytics" size={16} className="text-brand-gold" />
                 Reminders
               </CardTitle>
             </CardHeader>

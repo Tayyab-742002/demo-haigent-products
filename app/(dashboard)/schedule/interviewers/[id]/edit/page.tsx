@@ -38,6 +38,8 @@ import {
   XCircle,
 } from "lucide-react";
 import { use } from "react";
+import { Icon } from "@/components/ui/icon";
+import { getAgent } from "@/lib/constants/agents";
 
 const interviewerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -60,6 +62,9 @@ interface EditInterviewerPageProps {
 export default function EditInterviewerPage({ params }: EditInterviewerPageProps) {
   const { id } = use(params);
   const router = useRouter();
+  const agent = getAgent("schedule");
+  const primaryColor = agent?.primaryColor || "brand-pink";
+  const secondaryColor = agent?.secondaryColor || "brand-teal";
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -213,56 +218,57 @@ export default function EditInterviewerPage({ params }: EditInterviewerPageProps
   }
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-8 max-w-2xl">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className={`bg-${primaryColor} rounded-xl p-6`}>
+        <div className="flex items-start justify-between mb-4">
           <Link href="/schedule/interviewers">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <div>
-            <h2 className="text-2xl font-bold text-foreground">Edit Interviewer</h2>
-            <p className="text-muted-foreground">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Interviewer?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete the interviewer
+                  and remove them from all future scheduling.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Trash2 className="h-4 w-4 mr-2" />
+                  )}
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+        <div className="flex items-center gap-4">
+          <Icon name="user-settings" size={48} className="text-white" />
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-white">Edit Interviewer</h1>
+            <p className="text-white/80 text-lg mt-1">
               Update interviewer details and Cal.com integration
             </p>
           </div>
         </div>
-
-        {/* Delete Button */}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10">
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete Interviewer?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the interviewer
-                and remove them from all future scheduling.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleDelete}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                disabled={isDeleting}
-              >
-                {isDeleting ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <Trash2 className="h-4 w-4 mr-2" />
-                )}
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </div>
 
       {/* Error Message */}
@@ -275,7 +281,7 @@ export default function EditInterviewerPage({ params }: EditInterviewerPageProps
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Status Card */}
-        <Card className={isActive ? "border-brand-green/30 bg-brand-green/5" : "border-muted bg-muted/30"}>
+        <Card className={`${isActive ? "border-brand-green/30 bg-brand-green/5" : "border-muted bg-muted/30"} shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]`}>
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -307,9 +313,12 @@ export default function EditInterviewerPage({ params }: EditInterviewerPageProps
         </Card>
 
         {/* Interviewer Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Interviewer Details</CardTitle>
+        <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Icon name="user" size={20} className="text-brand-teal" />
+              Interviewer Details
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -370,10 +379,10 @@ export default function EditInterviewerPage({ params }: EditInterviewerPageProps
         </Card>
 
         {/* Cal.com Integration */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-brand-gold" />
+        <Card className="shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Icon name="network" size={20} className="text-brand-gold" />
               Cal.com Integration
             </CardTitle>
             <CardDescription>
@@ -485,7 +494,7 @@ export default function EditInterviewerPage({ params }: EditInterviewerPageProps
         </Card>
 
         {/* Auto-scheduling info */}
-        <Card className="border-brand-gold/30 bg-brand-gold/5">
+        <Card className="border-brand-gold/30 bg-brand-gold/5 shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
           <CardContent className="py-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center flex-shrink-0">
@@ -514,7 +523,7 @@ export default function EditInterviewerPage({ params }: EditInterviewerPageProps
           </Button>
           <Button
             type="submit"
-            className="bg-brand-gold hover:bg-brand-gold/90 text-brand-charcoal"
+            className={`bg-${secondaryColor} hover:brightness-110 text-brand-charcoal`}
             disabled={isLoading}
           >
             {isLoading ? (
