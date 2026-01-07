@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getWebhookUrl } from "@/lib/utils/webhooks";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { candidate_id, job_id } = body;
+    const { candidate_id, job_id, agent_id = "schedule" } = body;
 
     if (!candidate_id || !job_id) {
       return NextResponse.json(
@@ -12,10 +13,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const webhookUrl = process.env.N8N_WEBHOOK_PROCESS_APPLICATION;
+    const webhookUrl = getWebhookUrl(agent_id, "PROCESS_APPLICATION");
 
     if (!webhookUrl) {
-      console.error("N8N_WEBHOOK_PROCESS_APPLICATION not configured");
+      console.error(`Webhook PROCESS_APPLICATION not configured for agent: ${agent_id}`);
       return NextResponse.json(
         { error: "Webhook URL not configured" },
         { status: 500 }

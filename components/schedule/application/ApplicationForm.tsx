@@ -221,12 +221,13 @@ export function ApplicationForm({ jobId, jobTitle }: ApplicationFormProps) {
       // Trigger n8n scoring workflow via API route (avoids CORS issues)
       if (insertedCandidate?.id) {
         try {
-          const webhookResponse = await fetch("/api/webhook/trigger-scoring", {
+          const webhookResponse = await fetch("/api/webhooks/schedule-webhooks/trigger-scoring", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               candidate_id: insertedCandidate.id,
               job_id: jobId,
+              agent_id: "schedule",
             }),
           });
 
