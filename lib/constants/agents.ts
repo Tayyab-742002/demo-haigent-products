@@ -51,7 +51,7 @@ export const agents: Agent[] = [
     primaryColor: "brand-gold",
     secondaryColor: "brand-pink",
     href: "/sourcing",
-    isActive: false,
+    isActive: true,
   },
   {
     id: "reference",

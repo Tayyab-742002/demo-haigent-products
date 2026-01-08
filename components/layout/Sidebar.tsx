@@ -19,6 +19,16 @@ const scheduleNavItems = [
   { name: "Interviewers", href: "/schedule/interviewers", icon: "team" },
 ];
 
+// Sourcing Haigent sub-navigation
+const sourcingNavItems = [
+  { name: "Dashboard", href: "/sourcing", icon: "analytics" },
+  { name: "Roles", href: "/sourcing/roles", icon: "briefcase" },
+  { name: "Candidates", href: "/sourcing/candidates", icon: "users" },
+  { name: "Outreach", href: "/sourcing/outreach", icon: "communication" },
+  { name: "Meetings", href: "/sourcing/meetings", icon: "calendar" },
+  { name: "Analytics", href: "/sourcing/analytics", icon: "trending-up" },
+];
+
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -187,6 +197,70 @@ export default function Sidebar() {
                 const isActive =
                   pathname === item.href ||
                   (item.href !== "/schedule" && pathname.startsWith(item.href));
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={closeSidebar}
+                    className={cn(
+                      "group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                      isActive
+                        ? "bg-white/10 text-white shadow-sm"
+                        : "text-white/60 hover:bg-white/5 hover:text-white",
+                      isCollapsed && "justify-center"
+                    )}
+                  >
+                    <Icon
+                      name={item.icon}
+                      size={18}
+                      className={cn(
+                        "transition-colors",
+                        isActive
+                          ? currentAgent
+                            ? `text-${currentAgent.primaryColor}`
+                            : "text-brand-gold"
+                          : "text-white/60 group-hover:text-white"
+                      )}
+                    />
+                    {!isCollapsed && <span>{item.name}</span>}
+
+                    {/* Active indicator */}
+                    {isActive && !isCollapsed && (
+                      <div
+                        className={cn(
+                          "ml-auto w-1 h-4 rounded-full",
+                          currentAgent ? `bg-${currentAgent.primaryColor}` : "bg-brand-gold"
+                        )}
+                      />
+                    )}
+
+                    {/* Tooltip for collapsed state */}
+                    {isCollapsed && (
+                      <div className="absolute left-full ml-2 px-2 py-1 bg-brand-charcoal text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-xl border border-white/10">
+                        {item.name}
+                      </div>
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        )}
+
+        {/* Agent Sub-Navigation (Sourcing Haigent) */}
+        {currentAgentId === "sourcing" && (
+          <div className="px-4 py-6 flex-1 overflow-y-auto space-y-2">
+            {!isCollapsed && (
+              <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-3 px-3">
+                Sourcing
+              </p>
+            )}
+            <nav className="space-y-1">
+              {sourcingNavItems.map((item) => {
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== "/sourcing" && pathname.startsWith(item.href));
 
                 return (
                   <Link
