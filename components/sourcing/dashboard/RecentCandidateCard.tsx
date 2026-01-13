@@ -39,8 +39,8 @@ export function RecentCandidateCard({ candidate, roleTitle }: RecentCandidateCar
     .slice(0, 2);
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <Link href={`/sourcing/candidates/${candidate.candidate_id}`}>
+    <Link href={`/sourcing/candidates/${candidate.id}`}>
+      <Card className="hover:shadow-md transition-shadow cursor-pointer">
         <div className="p-4">
           <div className="flex items-start gap-3">
             {/* Avatar */}
@@ -92,21 +92,22 @@ export function RecentCandidateCard({ candidate, roleTitle }: RecentCandidateCar
                   )}
                 </div>
                 {candidate.linkedin_url && (
-                  <a
-                    href={candidate.linkedin_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      window.open(candidate.linkedin_url, "_blank", "noopener,noreferrer");
+                    }}
                     className="text-brand-teal hover:text-brand-teal/80"
                   >
                     <ExternalLink className="h-3.5 w-3.5" />
-                  </a>
+                  </button>
                 )}
               </div>
             </div>
           </div>
         </div>
-      </Link>
-    </Card>
+      </Card>
+    </Link>
   );
 }

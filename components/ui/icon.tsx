@@ -18,6 +18,8 @@ export const iconMap = {
   "schedule": "checklist",
   "trending-up": "analytics-dashboard",
   "analytics": "analytics-dashboard",
+  "bar-chart": "analytics-dashboard",
+  "pie-chart": "analytics-dashboard",
 
   // User & Profile
   "user": "user",
@@ -46,6 +48,8 @@ export const iconMap = {
   "discussion": "discussion",
   "communication": "user-communication",
   "customer-service": "customer-service",
+  "mail": "user-communication",
+  "email": "user-communication",
 
   // Workflow & Process
   "workflow": "workflow-process",
@@ -63,10 +67,12 @@ export const iconMap = {
   "talent-search": "talent-search",
   "salary": "salary-management",
   "remote": "remote-employee",
+  "location": "remote-employee",
 
   // Verification & Compliance
   "verify": "verify-compliance",
   "certified": "team-certification",
+  "check-circle": "user-approval",
 
   // Status & Actions
   "cancel": "user",

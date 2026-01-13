@@ -26,7 +26,6 @@ const sourcingNavItems = [
   { name: "Candidates", href: "/sourcing/candidates", icon: "users" },
   { name: "Outreach", href: "/sourcing/outreach", icon: "communication" },
   { name: "Meetings", href: "/sourcing/meetings", icon: "calendar" },
-  { name: "Analytics", href: "/sourcing/analytics", icon: "trending-up" },
 ];
 
 export default function Sidebar() {

@@ -62,7 +62,7 @@ export function RoleCard({ role }: RoleCardProps) {
   const skills = Array.isArray(role.skills) ? role.skills : [];
 
   return (
-    <Card className="group hover:shadow-lg transition-all duration-200 border-border/50">
+    <Card className="group hover:shadow-lg transition-all duration-200 border border-border/50 shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
       <CardContent className="p-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
@@ -82,7 +82,7 @@ export function RoleCard({ role }: RoleCardProps) {
               {role.department && role.location && <span>·</span>}
               {role.location && (
                 <>
-                  <Icon name="pin" size={14} />
+                  <Icon name="remote" size={14} />
                   <span>{role.location}</span>
                 </>
               )}
