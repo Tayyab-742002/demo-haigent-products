@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Rocket, X } from "lucide-react";
 import { nanoid } from "nanoid";
+import { any } from "zod";
 
 interface RoleFormProps {
   initialData?: Partial<RoleFormData> & { id?: string; role_id?: string };
@@ -43,7 +44,7 @@ export function RoleForm({ initialData, mode = "create" }: RoleFormProps) {
       skills: initialData?.skills || "",
       description: initialData?.description || "",
       salary_range: initialData?.salary_range || "",
-      company_name: initialData?.company_name || "Haigent",
+      company_name: initialData?.company_name || "Haigent" as string,
     },
   });
 
@@ -69,90 +70,173 @@ export function RoleForm({ initialData, mode = "create" }: RoleFormProps) {
     }
   };
 
-  const onSubmit = async (data: RoleFormData) => {
-    setIsLoading(true);
+  // const onSubmit = async (data: RoleFormData) => {
+  //   setIsLoading(true);
 
-    try {
-      const supabase = createClient();
+  //   try {
+  //     const supabase = createClient();
 
-      // Get current user
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  //     // Get current user
+  //     const {
+  //       data: { user },
+  //     } = await supabase.auth.getUser();
 
-      if (!user) {
-        throw new Error("Not authenticated");
+  //     if (!user) throw new Error("Not authenticated");
+
+  //     const roleId = mode === "edit" && initialData?.role_id
+  //       ? initialData.role_id
+  //       : `ROL-${nanoid(10)}`;
+
+  //     const roleData = {
+  //       role_id: roleId,
+  //       title: data.title,
+  //       department: data.department || null,
+  //       location: data.location || null,
+  //       experience_required: data.experience_required || null,
+  //       skills: skills, // Store as JSONB array
+  //       description: data.description,
+  //       salary_range: data.salary_range || null,
+  //       company_name: data.company_name || "Haigent",
+  //       organization_id: "00000000-0000-0000-0000-000000000001", // Demo org
+  //       created_by: user.id,
+  //       status: "active",
+  //     };
+
+  //     if (mode === "edit" && initialData?.id) {
+  //       // Edit mode: update role
+  //       const { error } = await supabase
+  //         .from("sourcing_roles")
+  //         .update(roleData)
+  //         .eq("id", initialData.id);
+
+  //       if (error) throw error;
+
+  //       // Optionally trigger n8n workflow here if needed
+  //     } else {
+  //       // Create mode: insert role
+  //       const { data: insertedData, error } = await supabase
+  //         .from("sourcing_roles")
+  //         .insert(roleData)
+  //         .select("id") // Get the actual DB id
+  //         .single();
+
+  //       if (error) throw error;
+
+  //       const dbRoleId = insertedData.id as string;
+
+  //       // Trigger n8n workflow with roleData + dbRoleId
+  //       try {
+  //         const webhookResponse = await fetch("/api/webhooks/sourcing-webhooks/trigger-search-candidate", {
+  //           method: "POST",
+  //           headers: { "Content-Type": "application/json" },
+  //           body: JSON.stringify({
+  //             ...roleData,
+  //             db_roleId,
+  //           }),
+  //         });
+
+  //         console.log("Webhook response status:", webhookResponse.status);
+  //       } catch (webhookError) {
+  //         console.error("Webhook error:", webhookError);
+  //       }
+  //     }
+
+  //     router.refresh();
+  //   } catch (error) {
+  //     console.error("Error saving role:", error);
+  //     alert("Error saving role. Please try again.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+const onSubmit = async (data: RoleFormData) => {
+  setIsLoading(true);
+
+  try {
+    const supabase = createClient();
+
+    // Get current user
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Not authenticated");
+
+    const roleId = mode === "edit" && initialData?.role_id
+      ? initialData.role_id
+      : `ROL-${nanoid(10)}`;
+
+    const roleData = {
+      role_id: roleId,
+      title: data.title,
+      department: data.department || null,
+      location: data.location || null,
+      experience_required: data.experience_required || null,
+      skills: skills, // Store as JSONB array
+      description: data.description,
+      salary_range: data.salary_range || null,
+      company_name: data.company_name || "Haigent",
+      organization_id: "00000000-0000-0000-0000-000000000001", // Demo org
+      created_by: user.id,
+      status: "active",
+    };
+
+    if (mode === "edit" && initialData?.id) {
+      // Edit mode
+      const { error } = await supabase
+        .from("sourcing_roles")
+        .update(roleData)
+        .eq("id", initialData.id);
+
+      if (error) throw error;
+
+      // Optionally trigger n8n workflow here if needed
+    } else {
+      // Create mode
+      const { data: insertedData, error } = await supabase
+        .from("sourcing_roles")
+        .insert(roleData)
+        .select("id") // Return actual DB id
+        .single();
+
+      if (error) throw error;
+
+      // ✅ Define dbRoleId here
+      const dbRoleId = insertedData.id as string;
+
+      // Trigger n8n workflow with roleData + dbRoleId
+      try {
+        const webhookResponse = await fetch(
+          "/api/webhooks/sourcing-webhooks/trigger-search-candidate",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              roleData,
+              db_roleId: dbRoleId, // make sure key matches what your backend expects
+            }),
+          }
+        );
+        console.log("Webhook response status:", webhookResponse.status);
+        
+      } catch (webhookError) {
+        console.error("Webhook error:", webhookError);
       }
-
-      const roleId = mode === "edit" && initialData?.role_id
-        ? initialData.role_id
-        : `ROL-${nanoid(10)}`;
-
-      const roleData = {
-        role_id: roleId,
-        title: data.title,
-        department: data.department || null,
-        location: data.location || null,
-        experience_required: data.experience_required || null,
-        skills: skills, // Store as JSONB array
-        description: data.description,
-        salary_range: data.salary_range || null,
-        company_name: data.company_name || "Haigent",
-        organization_id: "00000000-0000-0000-0000-000000000001", // Demo org
-        created_by: user.id,
-        status: "active",
-      };
-
-      if (mode === "edit" && initialData?.id) {
-        const { error } = await supabase
-          .from("sourcing_roles")
-          .update(roleData)
-          .eq("id", initialData.id);
-
-        if (error) throw error;
-
-        // TODO: Optionally re-trigger n8n workflow if needed
-      } else {
-        const { error } = await supabase
-          .from("sourcing_roles")
-          .insert(roleData);
-
-        if (error) throw error;
-
-        // TODO: Trigger n8n workflow
-        // This will be the webhook call to start the sourcing campaign
-        try {
-          // await fetch(process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || '', {
-          //   method: 'POST',
-          //   headers: { 'Content-Type': 'application/json' },
-          //   body: JSON.stringify({
-          //     role_id: roleId,
-          //     title: data.title,
-          //     skills: skills,
-          //     experience_required: data.experience_required,
-          //     location: data.location,
-          //     description: data.description,
-          //   }),
-          // });
-          console.log("Would trigger n8n workflow for role:", roleId);
-        } catch (webhookError) {
-          console.error("Webhook error:", webhookError);
-          // Don't fail the entire operation if webhook fails
-        }
-      }
-
-      router.push(`/sourcing/roles/${roleId}`);
-      router.refresh();
-    } catch (error) {
-      console.error("Error saving role:", error);
-      alert("Error saving role. Please try again.");
-    } finally {
-      setIsLoading(false);
     }
-  };
+
+    router.replace("/sourcing/roles");
+    router.refresh();
+  } catch (error) {
+    console.error("Error saving role:", error);
+    alert("Error saving role. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
       {/* Basic Information */}
       <Card>
         <CardHeader>
@@ -162,7 +246,6 @@ export function RoleForm({ initialData, mode = "create" }: RoleFormProps) {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Role Title */}
           <div className="space-y-2">
             <Label htmlFor="title">
               Role Title <span className="text-red-500">*</span>
@@ -173,32 +256,20 @@ export function RoleForm({ initialData, mode = "create" }: RoleFormProps) {
               {...register("title")}
               className={errors.title ? "border-red-500" : ""}
             />
-            {errors.title && (
-              <p className="text-sm text-red-500">{errors.title.message}</p>
-            )}
+            {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
           </div>
 
-          {/* Department and Location */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="department">Department</Label>
-              <Input
-                id="department"
-                placeholder="e.g., Engineering"
-                {...register("department")}
-              />
+              <Input id="department" placeholder="e.g., Engineering" {...register("department")} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                placeholder="e.g., Remote, San Francisco, CA"
-                {...register("location")}
-              />
+              <Input id="location" placeholder="e.g., Remote, San Francisco, CA" {...register("location")} />
             </div>
           </div>
 
-          {/* Experience and Company */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="experience_required">Experience Required</Label>
@@ -210,22 +281,13 @@ export function RoleForm({ initialData, mode = "create" }: RoleFormProps) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="company_name">Company Name</Label>
-              <Input
-                id="company_name"
-                placeholder="Haigent"
-                {...register("company_name")}
-              />
+              <Input id="company_name" placeholder="Haigent" {...register("company_name")} />
             </div>
           </div>
 
-          {/* Salary Range */}
           <div className="space-y-2">
             <Label htmlFor="salary_range">Salary Range</Label>
-            <Input
-              id="salary_range"
-              placeholder="e.g., $80k-120k, $150k-200k"
-              {...register("salary_range")}
-            />
+            <Input id="salary_range" placeholder="e.g., $80k-120k, $150k-200k" {...register("salary_range")} />
           </div>
         </CardContent>
       </Card>
@@ -241,7 +303,6 @@ export function RoleForm({ initialData, mode = "create" }: RoleFormProps) {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Skills Input */}
           <div className="flex gap-2">
             <Input
               value={skillInput}
@@ -255,7 +316,6 @@ export function RoleForm({ initialData, mode = "create" }: RoleFormProps) {
             </Button>
           </div>
 
-          {/* Skills Display */}
           {skills.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {skills.map((skill) => (
@@ -277,11 +337,8 @@ export function RoleForm({ initialData, mode = "create" }: RoleFormProps) {
             </div>
           )}
 
-          {errors.skills && (
-            <p className="text-sm text-red-500">{errors.skills.message}</p>
-          )}
+          {errors.skills && <p className="text-sm text-red-500">{errors.skills.message}</p>}
 
-          {/* Hidden input for form validation */}
           <input type="hidden" {...register("skills")} />
         </CardContent>
       </Card>
@@ -302,27 +359,16 @@ export function RoleForm({ initialData, mode = "create" }: RoleFormProps) {
             placeholder="Describe the role, responsibilities, team structure, company culture, and what makes this opportunity exciting..."
             className={`min-h-[200px] ${errors.description ? "border-red-500" : ""}`}
           />
-          {errors.description && (
-            <p className="text-sm text-red-500">{errors.description.message}</p>
-          )}
+          {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
         </CardContent>
       </Card>
 
       {/* Actions */}
       <div className="flex items-center justify-between gap-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => router.back()}
-          disabled={isLoading}
-        >
+        <Button type="button" variant="outline" onClick={() => router.back()} disabled={isLoading}>
           Cancel
         </Button>
-        <Button
-          type="submit"
-          disabled={isLoading || skills.length === 0}
-          className="bg-brand-gold hover:bg-brand-gold/90 text-brand-charcoal"
-        >
+        <Button type="submit" disabled={isLoading || skills.length === 0} className="bg-brand-gold hover:bg-brand-gold/90 text-brand-charcoal">
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

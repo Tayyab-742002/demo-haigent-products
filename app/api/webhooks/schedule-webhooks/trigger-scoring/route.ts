@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const webhookUrl = getWebhookUrl(agent_id, "PROCESS_APPLICATION");
+    const webhookUrl = getWebhookUrl(agent_id, "PROCESS_APPLICATION_PRODUCTION");
 
     if (!webhookUrl) {
       console.error(`Webhook PROCESS_APPLICATION not configured for agent: ${agent_id}`);

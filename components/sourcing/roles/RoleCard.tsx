@@ -24,6 +24,7 @@ import {
   Play,
   Pause,
   XCircle,
+
 } from "lucide-react";
 
 interface Role {
@@ -192,29 +193,7 @@ export function RoleCard({ role }: RoleCardProps) {
         </div>
 
         {/* Progress Indicators */}
-        <div className="space-y-3">
-          {/* Qualification Rate */}
-          <div>
-            <div className="flex items-center justify-between text-sm mb-1">
-              <span className="text-muted-foreground">Qualification Rate</span>
-              <span className="font-medium">
-                {role.candidates_qualified || 0} / {role.total_candidates || 0} ({qualificationRate}%)
-              </span>
-            </div>
-            <Progress value={qualificationRate} className="h-2" />
-          </div>
-
-          {/* Response Rate */}
-          <div>
-            <div className="flex items-center justify-between text-sm mb-1">
-              <span className="text-muted-foreground">Response Rate</span>
-              <span className="font-medium">
-                {role.emails_replied || 0} / {role.emails_sent || 0} ({responseRate}%)
-              </span>
-            </div>
-            <Progress value={responseRate} className="h-2" />
-          </div>
-        </div>
+      
 
         {/* Footer */}
         <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/50">
