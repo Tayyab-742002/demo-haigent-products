@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     }
 
     const agent_id = "sourcing";
-    const webhookUrl = getWebhookUrl(agent_id, "SEARCH_CANDIDATES");
+    const webhookUrl = getWebhookUrl(agent_id, "SEARCH_CANDIDATES_PRODUCTION");
 
     if (!webhookUrl) {
       console.error(`Webhook SEARCH_CANDIDATES not configured for agent: ${agent_id}`);

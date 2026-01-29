@@ -217,11 +217,13 @@ const onSubmit = async (data: RoleFormData) => {
           }
         );
         console.log("Webhook response status:", webhookResponse.status);
+        
       } catch (webhookError) {
         console.error("Webhook error:", webhookError);
       }
     }
 
+    router.replace("/sourcing/roles");
     router.refresh();
   } catch (error) {
     console.error("Error saving role:", error);
