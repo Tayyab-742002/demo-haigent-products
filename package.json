@@ -26,6 +26,7 @@
     "date-fns": "^4.1.0",
     "lucide-react": "^0.562.0",
     "next": "16.1.1",
+    "pdf-parse": "^2.4.5",
     "pdf-parse-new": "^2.0.0",
     "react": "19.2.3",
     "react-day-picker": "^9.13.0",

@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Rocket, X } from "lucide-react";
 import { nanoid } from "nanoid";
+import { any } from "zod";
 
 interface RoleFormProps {
   initialData?: Partial<RoleFormData> & { id?: string; role_id?: string };
@@ -43,7 +44,7 @@ export function RoleForm({ initialData, mode = "create" }: RoleFormProps) {
       skills: initialData?.skills || "",
       description: initialData?.description || "",
       salary_range: initialData?.salary_range || "",
-      company_name: initialData?.company_name || "Haigent",
+      company_name: initialData?.company_name || "Haigent" as string,
     },
   });
 
@@ -235,7 +236,7 @@ const onSubmit = async (data: RoleFormData) => {
 
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
       {/* Basic Information */}
       <Card>
         <CardHeader>

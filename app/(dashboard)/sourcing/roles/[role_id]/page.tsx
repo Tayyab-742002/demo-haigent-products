@@ -13,7 +13,7 @@ import { RoleStatusBadge } from "@/components/sourcing/roles/RoleStatusBadge";
 import { CandidateStatusBadge } from "@/components/sourcing/candidates/CandidateStatusBadge";
 import { ScoreBadge } from "@/components/sourcing/candidates/ScoreBadge";
 import { OutreachStatusBadge } from "@/components/sourcing/outreach/OutreachStatusBadge";
-import { ArrowLeft, Edit, Play, Pause, Linkedin, ExternalLink, Clock } from "lucide-react";
+import { ArrowLeft, Edit, Play, Pause, Linkedin, ExternalLink, Clock, Calendar } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 
