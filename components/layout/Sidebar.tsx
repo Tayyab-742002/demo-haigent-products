@@ -29,6 +29,13 @@ const sourcingNavItems = [
   { name: "Meetings", href: "/sourcing/meetings", icon: "calendar" },
 ];
 
+// Get sub-nav items for a given agent
+function getSubNavItems(agentId: string) {
+  if (agentId === "schedule") return { label: "Schedule", items: scheduleNavItems };
+  if (agentId === "sourcing") return { label: "Sourcing", items: sourcingNavItems };
+  return null;
+}
+
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -38,6 +45,7 @@ export default function Sidebar() {
   // Determine which agent is currently active based on path
   const currentAgentId = pathname.split("/")[1] as AgentId;
   const currentAgent = agents.find((a) => a.id === currentAgentId);
+  const subNav = getSubNavItems(currentAgentId);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -77,7 +85,7 @@ export default function Sidebar() {
         )}
       >
         {/* Logo Section */}
-        <div className="flex h-20 items-center justify-between px-6 border-b border-white/5">
+        <div className="flex h-16 items-center justify-between px-6 border-b border-white/5 shrink-0">
           <Link href="/schedule" className="flex items-center gap-3 group">
             <div className="relative">
               <div
@@ -121,202 +129,140 @@ export default function Sidebar() {
           </button>
         </div>
 
-        {/* Agents Section */}
-        <div className="px-4 py-6 space-y-2">
-          {!isCollapsed && (
-            <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-3 px-3">
-              AI Agents
-            </p>
-          )}
-          <nav className="space-y-1">
-            {agents.map((agent) => {
-              const isCurrentAgent = currentAgentId === agent.id;
-              const AgentIcon = agent.icon;
+        {/* Scrollable middle: Agents + Sub-nav */}
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          {/* Agents Section */}
+          <div className="px-4 pt-4 pb-2 space-y-1">
+            {!isCollapsed && (
+              <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2 px-3">
+                AI Agents
+              </p>
+            )}
+            <nav className="space-y-0.5">
+              {agents.map((agent) => {
+                const isCurrentAgent = currentAgentId === agent.id;
+                const AgentIcon = agent.icon;
 
-              return (
-                <Link
-                  key={agent.id}
-                  href={agent.isActive ? agent.href : "#"}
-                  onClick={(e) => {
-                    if (!agent.isActive) e.preventDefault();
-                    else closeSidebar();
-                  }}
-                  className={cn(
-                    "group relative flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200",
-                    isCurrentAgent
-                      ? `bg-${agent.primaryColor} text-brand-charcoal`
-                      : agent.isActive
-                      ? "text-white/70 hover:bg-white/5 hover:text-white"
-                      : "text-white/30 cursor-not-allowed",
-                    isCollapsed && "justify-center"
-                  )}
-                >
-                  <AgentIcon
+                return (
+                  <Link
+                    key={agent.id}
+                    href={agent.isActive ? agent.href : "#"}
+                    onClick={(e) => {
+                      if (!agent.isActive) e.preventDefault();
+                      else closeSidebar();
+                    }}
                     className={cn(
-                      "h-5 w-5 transition-transform duration-200",
-                      isCurrentAgent && "scale-110"
+                      "group relative flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200",
+                      isCurrentAgent
+                        ? `bg-${agent.primaryColor} text-brand-charcoal`
+                        : agent.isActive
+                        ? "text-white/70 hover:bg-white/5 hover:text-white"
+                        : "text-white/30 cursor-not-allowed",
+                      isCollapsed && "justify-center"
                     )}
-                  />
-                  {!isCollapsed && (
-                    <>
-                      <span className="flex-1">{agent.shortName}</span>
-                      {!agent.isActive && (
-                        <Lock className="h-3 w-3 opacity-50" />
+                  >
+                    <AgentIcon
+                      className={cn(
+                        "h-5 w-5 transition-transform duration-200",
+                        isCurrentAgent && "scale-110"
                       )}
-                      {isCurrentAgent && (
-                        <div className="w-2 h-2 rounded-full bg-brand-charcoal" />
-                      )}
-                    </>
-                  )}
+                    />
+                    {!isCollapsed && (
+                      <>
+                        <span className="flex-1">{agent.shortName}</span>
+                        {!agent.isActive && (
+                          <Lock className="h-3 w-3 opacity-50" />
+                        )}
+                        {isCurrentAgent && (
+                          <div className="w-2 h-2 rounded-full bg-brand-charcoal" />
+                        )}
+                      </>
+                    )}
 
-                  {/* Tooltip for collapsed state */}
-                  {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-brand-charcoal text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-xl border border-white/10">
-                      {agent.shortName}
-                    </div>
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
+                    {/* Tooltip for collapsed state */}
+                    {isCollapsed && (
+                      <div className="absolute left-full ml-2 px-2 py-1 bg-brand-charcoal text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-xl border border-white/10">
+                        {agent.shortName}
+                      </div>
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* Divider + Sub-Navigation */}
+          {subNav && (
+            <>
+              <div className="mx-4 border-t border-white/5" />
+
+              <div className="px-4 pt-4 pb-2 space-y-1">
+                {!isCollapsed && (
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2 px-3">
+                    {subNav.label}
+                  </p>
+                )}
+                <nav className="space-y-0.5">
+                  {subNav.items.map((item) => {
+                    const basePath = `/${currentAgentId}`;
+                    const isActive =
+                      pathname === item.href ||
+                      (item.href !== basePath && pathname.startsWith(item.href));
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={closeSidebar}
+                        className={cn(
+                          "group relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                          isActive
+                            ? "bg-white/10 text-white shadow-sm"
+                            : "text-white/60 hover:bg-white/5 hover:text-white",
+                          isCollapsed && "justify-center"
+                        )}
+                      >
+                        <Icon
+                          name={item.icon}
+                          size={18}
+                          className={cn(
+                            "transition-colors",
+                            isActive
+                              ? currentAgent
+                                ? `text-${currentAgent.primaryColor}`
+                                : "text-brand-gold"
+                              : "text-white/60 group-hover:text-white"
+                          )}
+                        />
+                        {!isCollapsed && <span>{item.name}</span>}
+
+                        {/* Active indicator */}
+                        {isActive && !isCollapsed && (
+                          <div
+                            className={cn(
+                              "ml-auto w-1 h-4 rounded-full",
+                              currentAgent ? `bg-${currentAgent.primaryColor}` : "bg-brand-gold"
+                            )}
+                          />
+                        )}
+
+                        {/* Tooltip for collapsed state */}
+                        {isCollapsed && (
+                          <div className="absolute left-full ml-2 px-2 py-1 bg-brand-charcoal text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-xl border border-white/10">
+                            {item.name}
+                          </div>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </nav>
+              </div>
+            </>
+          )}
         </div>
 
-        {/* Divider */}
-        <div className="mx-4 border-t border-white/5" />
-
-        {/* Agent Sub-Navigation (Schedule Haigent) */}
-        {currentAgentId === "schedule" && (
-          <div className="px-4 py-6 flex-1 overflow-y-auto space-y-2">
-            {!isCollapsed && (
-              <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-3 px-3">
-                Schedule
-              </p>
-            )}
-            <nav className="space-y-1">
-              {scheduleNavItems.map((item) => {
-                const isActive =
-                  pathname === item.href ||
-                  (item.href !== "/schedule" && pathname.startsWith(item.href));
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={closeSidebar}
-                    className={cn(
-                      "group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
-                      isActive
-                        ? "bg-white/10 text-white shadow-sm"
-                        : "text-white/60 hover:bg-white/5 hover:text-white",
-                      isCollapsed && "justify-center"
-                    )}
-                  >
-                    <Icon
-                      name={item.icon}
-                      size={18}
-                      className={cn(
-                        "transition-colors",
-                        isActive
-                          ? currentAgent
-                            ? `text-${currentAgent.primaryColor}`
-                            : "text-brand-gold"
-                          : "text-white/60 group-hover:text-white"
-                      )}
-                    />
-                    {!isCollapsed && <span>{item.name}</span>}
-
-                    {/* Active indicator */}
-                    {isActive && !isCollapsed && (
-                      <div
-                        className={cn(
-                          "ml-auto w-1 h-4 rounded-full",
-                          currentAgent ? `bg-${currentAgent.primaryColor}` : "bg-brand-gold"
-                        )}
-                      />
-                    )}
-
-                    {/* Tooltip for collapsed state */}
-                    {isCollapsed && (
-                      <div className="absolute left-full ml-2 px-2 py-1 bg-brand-charcoal text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-xl border border-white/10">
-                        {item.name}
-                      </div>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        )}
-
-        {/* Agent Sub-Navigation (Sourcing Haigent) */}
-        {currentAgentId === "sourcing" && (
-          <div className="px-4 py-6 flex-1 overflow-y-auto space-y-2">
-            {!isCollapsed && (
-              <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-3 px-3">
-                Sourcing
-              </p>
-            )}
-            <nav className="space-y-1">
-              {sourcingNavItems.map((item) => {
-                const isActive =
-                  pathname === item.href ||
-                  (item.href !== "/sourcing" && pathname.startsWith(item.href));
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={closeSidebar}
-                    className={cn(
-                      "group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
-                      isActive
-                        ? "bg-white/10 text-white shadow-sm"
-                        : "text-white/60 hover:bg-white/5 hover:text-white",
-                      isCollapsed && "justify-center"
-                    )}
-                  >
-                    <Icon
-                      name={item.icon}
-                      size={18}
-                      className={cn(
-                        "transition-colors",
-                        isActive
-                          ? currentAgent
-                            ? `text-${currentAgent.primaryColor}`
-                            : "text-brand-gold"
-                          : "text-white/60 group-hover:text-white"
-                      )}
-                    />
-                    {!isCollapsed && <span>{item.name}</span>}
-
-                    {/* Active indicator */}
-                    {isActive && !isCollapsed && (
-                      <div
-                        className={cn(
-                          "ml-auto w-1 h-4 rounded-full",
-                          currentAgent ? `bg-${currentAgent.primaryColor}` : "bg-brand-gold"
-                        )}
-                      />
-                    )}
-
-                    {/* Tooltip for collapsed state */}
-                    {isCollapsed && (
-                      <div className="absolute left-full ml-2 px-2 py-1 bg-brand-charcoal text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-xl border border-white/10">
-                        {item.name}
-                      </div>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        )}
-
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* Footer Actions */}
-        <div className="p-4 border-t border-white/5 space-y-1">
+        {/* Footer Actions - pinned to bottom */}
+        <div className="p-4 border-t border-white/5 space-y-1 shrink-0">
           <Link
             href="/schedule/settings"
             onClick={closeSidebar}
