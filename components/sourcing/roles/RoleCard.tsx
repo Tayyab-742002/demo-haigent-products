@@ -1,6 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,7 +26,6 @@ import {
   Play,
   Pause,
   XCircle,
-
 } from "lucide-react";
 
 interface Role {
@@ -49,6 +50,20 @@ interface RoleCardProps {
 }
 
 export function RoleCard({ role }: RoleCardProps) {
+  const router = useRouter();
+
+  const updateStatus = async (newStatus: string) => {
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("sourcing_roles")
+      .update({ status: newStatus })
+      .eq("role_id", role.role_id);
+
+    if (!error) {
+      router.refresh();
+    }
+  };
+
   // Calculate response rate
   const responseRate = role.emails_sent && role.emails_sent > 0
     ? Math.round((role.emails_replied || 0) / role.emails_sent * 100)
@@ -113,21 +128,23 @@ export function RoleCard({ role }: RoleCardProps) {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 {role.status === "active" && (
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => updateStatus("paused")}>
                     <Pause className="h-4 w-4 mr-2" />
                     Pause Campaign
                   </DropdownMenuItem>
                 )}
                 {role.status === "paused" && (
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => updateStatus("active")}>
                     <Play className="h-4 w-4 mr-2" />
                     Resume Campaign
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem className="text-red-600">
-                  <XCircle className="h-4 w-4 mr-2" />
-                  Close Role
-                </DropdownMenuItem>
+                {role.status !== "closed" && (
+                  <DropdownMenuItem className="text-red-600" onClick={() => updateStatus("closed")}>
+                    <XCircle className="h-4 w-4 mr-2" />
+                    Close Role
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
