@@ -9,6 +9,7 @@ import { agents, type AgentId } from "@/lib/constants/agents";
 import { Settings, LogOut, Lock, Menu, X, ChevronRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { useSidebar } from "@/hooks/use-sidebar";
 
 // Schedule Haigent sub-navigation
 const scheduleNavItems = [
@@ -32,7 +33,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const { isCollapsed, setIsCollapsed } = useSidebar();
 
   // Determine which agent is currently active based on path
   const currentAgentId = pathname.split("/")[1] as AgentId;

@@ -1,5 +1,7 @@
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
+import { SidebarProvider } from "@/hooks/use-sidebar";
+import { DashboardContent } from "@/components/layout/DashboardContent";
 
 export default function DashboardLayout({
   children,
@@ -7,18 +9,20 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Sidebar */}
-      <Sidebar />
+    <SidebarProvider>
+      <div className="min-h-screen bg-background">
+        {/* Sidebar */}
+        <Sidebar />
 
-      {/* Main Content - responsive padding */}
-      <div className="lg:pl-72 transition-all duration-300">
-        {/* Header */}
-        <Header />
+        {/* Main Content - responsive padding */}
+        <DashboardContent>
+          {/* Header */}
+          <Header />
 
-        {/* Page Content */}
-        <main className="p-4 sm:p-6 lg:p-8 pt-20 lg:pt-6">{children}</main>
+          {/* Page Content */}
+          <main className="p-4 sm:p-6 lg:p-8 pt-20 lg:pt-6">{children}</main>
+        </DashboardContent>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
